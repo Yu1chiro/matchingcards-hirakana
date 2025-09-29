@@ -4,18 +4,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware untuk serve static files dari folder public
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Rute untuk halaman utama (index.html dari folder public)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-app.get('/aisatsu-img', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/img-root', 'aisatsu-img.png'));
-});
-app.get('/mochimono-img', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/img-root', 'mochimono-img.png'));
-});
+
 
 
 // Rute untuk halaman aisatsu
