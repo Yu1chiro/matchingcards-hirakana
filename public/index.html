@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-matching cards</title>
+    <link rel="shortcut icon" href="img-root/ico.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'hover-lift': 'hoverLift 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        hoverLift: {
+                            '0%': { transform: 'translateY(0px)' },
+                            '100%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen font-sans">
+    
+    <!-- Header Section -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-800 mb-2 animate__animated animate__fadeIn">
+                Kotoba <span class="text-pink-500"> Matching Cards</span>
+            </h1>
+            <p class="text-slate-600 text-lg md:text-xl mb-5 max-w-2xl mx-auto">
+                Silahkan pilih tema yang di sediakan
+            </p>
+            <p class="text-center text-sm text-gray-800 font-semibold"> &copy; Ning | 2025</p>
+        </div>
+
+        <!-- Grid Cards Container -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-6 md:gap-8">
+            
+            <!-- Card 1 -->
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up">
+                <!-- Thumbnail -->
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video  flex items-center justify-center">
+                        <img src="/aisatsu-img" class="rounded-lg" alt="">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+                      Aisatsu
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Pelajari kosakata aisatsu dalam bahasa Jepang
+                    </p>
+                    <a href="/aisatsu" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Mulai Belajar</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up" style="animation-delay: 0.1s">
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video  flex items-center justify-center">
+                        <img src="/mochimono-img" class="rounded-lg" alt="">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-emerald-600 transition-colors duration-300 line-clamp-2">
+                        Mochimono
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Pelajari kosakata mochimono dalam bahasa Jepang
+                    </p>
+                    <a href="/kotoba-mochimono" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Pelajari</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up" style="animation-delay: 0.2s">
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2">
+                        Desain Kreatif
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Inspirasi dan tools terbaik untuk mengembangkan kreativitas dalam desain modern.
+                    </p>
+                    <a href="#" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Eksplorasi</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up" style="animation-delay: 0.3s">
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-rose-400 via-rose-500 to-rose-600 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-rose-600 transition-colors duration-300 line-clamp-2">
+                        Kesehatan & Lifestyle
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Tips dan panduan untuk menjalani hidup sehat dengan gaya hidup yang seimbang.
+                    </p>
+                    <a href="#" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Mulai Sekarang</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up" style="animation-delay: 0.4s">
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-amber-600 transition-colors duration-300 line-clamp-2">
+                        Inovasi & Ide
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Kumpulan ide-ide inovatif dan solusi kreatif untuk berbagai tantangan masa depan.
+                    </p>
+                    <a href="#" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Temukan Ide</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-slate-100 animate-fade-in-up" style="animation-delay: 0.5s">
+                <div class="relative overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-teal-400 via-teal-500 to-teal-600 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="p-6">
+                    <h1 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-teal-600 transition-colors duration-300 line-clamp-2">
+                        Global Network
+                    </h1>
+                    <p class="text-slate-600 text-sm mb-6 line-clamp-3">
+                        Terhubung dengan komunitas global dan akses ke jaringan profesional terluas.
+                    </p>
+                    <a href="#" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                        <span>Bergabung</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>  -->
+
+        </div>
+        
+    </div>
+
+</body>
+</html>

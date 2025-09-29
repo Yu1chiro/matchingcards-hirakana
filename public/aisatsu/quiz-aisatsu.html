@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Otomatis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .option-item:not(.cursor-not-allowed):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex items-center justify-center min-h-screen p-4">
+
+    <div id="quiz-container" class="w-full max-w-2xl mx-auto">
+        
+        <div id="quiz-box" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg transition-all duration-300">
+            <div id="quiz-header" class="mb-6">
+                <p class="text-sm font-semibold text-indigo-600">日本語クイズ</p>
+                <div class="flex justify-between items-center mt-2">
+                    <h2 class="text-xl font-bold">Pertanyaan <span id="question-number">1</span>/<span id="total-questions"></span></h2>
+                    <p id="score-display" class="text-lg font-bold">Skor: <span id="score">0</span></p>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5 mt-4">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="question-area">
+                </div>
+        </div>
+
+        <div id="result-box" class="hidden bg-white p-8 sm:p-10 rounded-2xl shadow-lg text-center fade-in">
+             <h1 class="text-3xl font-extrabold text-indigo-600 mb-2">クイズ完了!</h1>
+             <p class="text-slate-600 mb-6">Anda telah menyelesaikan kuis. Lihat hasilnya di bawah.</p>
+             <div class="bg-slate-100 p-6 rounded-xl mb-8">
+                 <p class="text-lg font-semibold">Skor Akhir Anda</p>
+                 <p id="final-score" class="text-6xl font-bold my-3">0</p>
+                 <p id="result-feedback" class="font-medium text-slate-500"></p>
+             </div>
+             <button id="retry-button" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                 Coba Lagi
+             </button>
+        </div>
+
+    </div>
+
+<script>
+    // --- DATA KUIS (JSON) ---
+    const quizData = [
+        {
+            question: "Gambar di atas menunjukkan kosakata?",
+            imageUrl: "https://ucarecdn.com/fbf75174-97d5-460b-a01b-caf1026bdc14/Picture1.jpg",
+            options: { a: "Konbanwa", b: "Konnichiwa", c: "Ohayou gozaimasu" },
+            correctAnswer: "a"
+        },
+        {
+            question: "Gambar di atas merupakan salam?",
+            imageUrl: "https://ucarecdn.com/f31fb470-1b5f-4e4f-b0ad-2cdd24537c4f/Picture2.jpg",
+            options: { a: "Sayounara", b: "Okaerinasai", c: "Arigatou gozaimasu" },
+            correctAnswer: "b"
+        },
+        {
+            question: "Gambar di atas merupakan salam?",
+            imageUrl: "https://ucarecdn.com/3501ad54-b553-4bca-ab35-afa27fe18499/Picture3.jpg",
+            options: { a: "Itadakimasu", b: "Sayounara", c: "Ohayou gozaimasu" },
+            correctAnswer: "a"
+        },
+        {
+            question: "Gambar tersebut merupakan salam?",
+            imageUrl: "https://ucarecdn.com/82af45a2-c4ef-45b3-bad5-56e81e2c56c1/Picture4.jpg",
+            options: { a: "Shitsureishimasu", b: "Konnichiwa", c: "Arigatou gozaimasu" },
+            correctAnswer: "a"
+        }
+    ];
+
+    // --- VARIABEL & ELEMEN DOM ---
+    let currentQuestionIndex = 0;
+    let userScore = 0;
+    // === PERUBAHAN DI SINI: Kalkulasi skor dinamis ===
+    const scorePerQuestion = 100 / quizData.length;
+
+    const questionNumberEl = document.getElementById('question-number');
+    const totalQuestionsEl = document.getElementById('total-questions');
+    const scoreEl = document.getElementById('score');
+    const progressBarEl = document.getElementById('progress-bar');
+    const questionAreaEl = document.getElementById('question-area');
+    
+    const quizBoxEl = document.getElementById('quiz-box');
+    const resultBoxEl = document.getElementById('result-box');
+    const finalScoreEl = document.getElementById('final-score');
+    const resultFeedbackEl = document.getElementById('result-feedback');
+    const retryButton = document.getElementById('retry-button');
+
+    // --- FUNGSI-FUNGSI UTAMA ---
+
+    function loadQuestion() {
+        // Update progress bar di awal
+        progressBarEl.style.width = `${(currentQuestionIndex / quizData.length) * 100}%`;
+        
+        const currentQuestion = quizData[currentQuestionIndex];
+        
+        totalQuestionsEl.textContent = quizData.length;
+        questionNumberEl.textContent = currentQuestionIndex + 1;
+
+        let questionHTML = `
+            <div class="fade-in">
+                <div class="mb-6 rounded-lg overflow-hidden border border-slate-200">
+                    <img src="${currentQuestion.imageUrl}" alt="Soal Kuis" class="w-full h-auto">
+                </div>
+                <p class="text-xl font-semibold mb-6">${currentQuestion.question}</p>
+                <div id="options-container" class="space-y-3">
+        `;
+        
+        for (const [key, value] of Object.entries(currentQuestion.options)) {
+            questionHTML += `
+                <div 
+                    class="option-item flex items-center p-4 border-2 border-slate-200 rounded-lg cursor-pointer transition-all duration-200"
+                    data-key="${key}"
+                    onclick="handleOptionClick(this, '${key}')">
+                    <div class="w-6 h-6 border-2 border-slate-300 rounded-full flex-shrink-0 mr-4"></div>
+                    <span class="font-medium">${value}</span>
+                </div>
+            `;
+        }
+        questionHTML += `</div></div>`;
+        questionAreaEl.innerHTML = questionHTML;
+    }
+    
+    function handleOptionClick(optionElement, selectedKey) {
+        const allOptions = document.querySelectorAll('.option-item');
+        allOptions.forEach(opt => {
+            opt.onclick = null;
+            opt.classList.add('cursor-not-allowed');
+            opt.classList.remove('option-item:hover');
+        });
+
+        const currentQuestion = quizData[currentQuestionIndex];
+        const isCorrect = selectedKey === currentQuestion.correctAnswer;
+
+        // === PERUBAHAN DI SINI: Update skor menggunakan nilai dinamis ===
+        if (isCorrect) {
+            userScore += scorePerQuestion;
+            scoreEl.textContent = Math.round(userScore);
+            optionElement.classList.add('bg-green-100', 'border-green-500');
+            optionElement.querySelector('div').classList.add('bg-green-500');
+        } else {
+            optionElement.classList.add('bg-red-100', 'border-red-500');
+            optionElement.querySelector('div').classList.add('bg-red-500');
+            
+            const correctOptionEl = document.querySelector(`.option-item[data-key="${currentQuestion.correctAnswer}"]`);
+            if (correctOptionEl) {
+                correctOptionEl.classList.add('bg-green-100', 'border-green-500');
+                correctOptionEl.querySelector('div').classList.add('bg-green-500');
+            }
+        }
+        
+        // Update progress bar setelah menjawab
+        progressBarEl.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }, 1200);
+    }
+
+    function showResults() {
+        quizBoxEl.classList.add('hidden');
+        resultBoxEl.classList.remove('hidden');
+
+        // === PERUBAHAN DI SINI: Bulatkan skor akhir ===
+        const finalRoundedScore = Math.round(userScore);
+        finalScoreEl.textContent = finalRoundedScore;
+        
+        let feedback = "";
+        if (finalRoundedScore === 100) feedback = "Kamu Hebat!";
+        else if (finalRoundedScore >= 60) feedback = " Sedikit lagi!";
+        else feedback = "Terus semangat Coba lagi ya!";
+        resultFeedbackEl.textContent = feedback;
+    }
+    
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        userScore = 0;
+        
+        resultBoxEl.classList.add('hidden');
+        quizBoxEl.classList.remove('hidden');
+        
+        scoreEl.textContent = "0";
+        loadQuestion();
+    }
+
+    // --- INISIALISASI KUIS ---
+    retryButton.addEventListener('click', restartQuiz);
+    window.addEventListener('load', loadQuestion);
+
+</script>
+</body>
+</html>
