@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Matching Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gradient-to-br from-blue-50 via-white to-blue-50 min-h-screen">
+    
+    <!-- Header dengan Back Button -->
+    <div class="bg-white shadow-sm border-b border-blue-100 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium text-sm sm:text-base">
+                    <i class="fas fa-arrow-left text-base sm:text-lg"></i>
+                    <span class="hidden sm:inline">Kembali</span>
+                </button>
+                
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                        <i class="fas fa-brain text-white text-lg sm:text-xl"></i>
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-xs text-gray-500 font-medium">Memory Game</p>
+                        <p class="text-sm text-blue-600 font-semibold">Kotoba Matching</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
+        
+        <!-- Title Section -->
+        <div class="text-center mb-6 sm:mb-8 lg:mb-10 animate-fade-in">
+            <div class="inline-block mb-3 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold">
+                <i class="fas fa-gamepad mr-2"></i>
+                MATCHING GAME
+            </div>
+            <h1 id="game-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-900 mb-2 sm:mb-3 capitalize tracking-tight">
+                Game Kotoba
+            </h1>
+            <p class="text-sm sm:text-base lg:text-lg text-gray-600 font-medium max-w-2xl mx-auto">
+                <i class="fas fa-puzzle-piece text-blue-500 mr-2"></i>
+                Cocokkan gambar dengan kosakata yang sesuai!
+            </p>
+        </div>
+
+        <!-- Game Board Container -->
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border-2 border-blue-100 p-4 sm:p-6 lg:p-8">
+                
+                <!-- Info Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-5 sm:mb-6 pb-4 sm:pb-5 border-b-2 border-blue-50">
+                    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
+                        <i class="fas fa-layer-group text-blue-600 text-sm sm:text-base"></i>
+                        <span class="text-xs sm:text-sm font-semibold text-blue-900">Total Pasangan: <span id="total-pairs" class="text-blue-600">0</span></span>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-xs sm:text-sm font-semibold">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="hidden sm:inline">Mulai Ulang</span>
+                        <span class="sm:hidden">Ulang</span>
+                    </button>
+                </div>
+
+                <!-- Game Board Grid -->
+                <div id="game-board" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5"></div>
+
+                <!-- Loading State -->
+                <div id="loading" class="text-center py-12 hidden">
+                    <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+                    <p class="text-gray-600 font-medium">Memuat permainan...</p>
+                </div>
+
+            </div>
+
+            <!-- Instructions Card -->
+            <div class="mt-6 sm:mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-5 sm:p-6 border border-blue-200">
+                <h3 class="text-base sm:text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-blue-600"></i>
+                    Cara Bermain
+                </h3>
+                <ul class="space-y-2 text-xs sm:text-sm text-gray-700">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Klik kartu untuk membaliknya dan melihat isinya</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Cocokkan gambar dengan kata bahasa Jepang yang sesuai</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Selesaikan semua pasangan untuk memenangkan permainan!</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-6 sm:py-8 text-xs sm:text-sm text-gray-500">
+        <p class="font-medium">
+            <i class="fas fa-graduation-cap text-blue-500 mr-1"></i>
+            Game Edukasi Bahasa Jepang
+        </p>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let gameData = [];
+    let selectedCards = [];
+    let matchedPairs = 0;
+    let canSelect = true;
+    const gameBoard = document.getElementById('game-board');
+    const gameTitle = document.getElementById('game-title');
+    const category = window.location.pathname.split('/').pop();
+
+    async function fetchAndStartGame() {
+        try {
+            const res = await fetch(`/api/kotoba/${category}`);
+            if (!res.ok) throw new Error('Data tidak ditemukan');
+            const apiData = await res.json();
+            gameData = apiData.map(item => ({ id: item.id, image: item.image_url, word: item.word_url }));
+            gameTitle.textContent = `${category} Kotoba Game`;
+            document.title = `${category.charAt(0).toUpperCase() + category.slice(1)} Game`;
+            document.getElementById('total-pairs').textContent = gameData.length;
+            initGame();
+        } catch (error) {
+            gameBoard.innerHTML = `<p class="text-red-500 col-span-full text-center font-semibold py-8"><i class="fas fa-exclamation-triangle mr-2"></i>${error.message}</p>`;
+        }
+    }
+
+    function initGame() {
+        gameBoard.innerHTML = '';
+        selectedCards = [];
+        matchedPairs = 0;
+        canSelect = true;
+        let cards = [];
+        gameData.forEach(item => {
+            cards.push(createCard(item, 'image'));
+            cards.push(createCard(item, 'word'));
+        });
+        cards.sort(() => 0.5 - Math.random());
+        cards.forEach(card => gameBoard.appendChild(card));
+    }
+
+    function createCard(item, type) {
+        const card = document.createElement('div');
+        card.className = 'card cursor-pointer aspect-[3/4] relative';
+        card.dataset.id = item.id;
+        card.dataset.type = type;
+        const content = type === 'image' ? `<img src="${item.image}" class="w-full h-full object-contain p-2">` : `<img src="${item.word}" class="w-full h-full object-contain p-2">`;
+        card.innerHTML = `
+            <div class="card-inner w-full h-full relative transition-transform duration-700" style="transform-style: preserve-3d;">
+                <div class="card-front absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg" style="backface-visibility: hidden;">
+                    <i class="fas fa-question text-white text-3xl sm:text-4xl"></i>
+                </div>
+                <div class="card-back absolute w-full h-full bg-white rounded-xl sm:rounded-2xl border-2 border-blue-200 shadow-lg" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                    ${content}
+                </div>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => {
+            if (!canSelect || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            
+            card.classList.add('flipped');
+            card.querySelector('.card-inner').style.transform = 'rotateY(180deg)';
+            
+            selectedCards.push(card);
+            if (selectedCards.length === 2) {
+                canSelect = false;
+                const [card1, card2] = selectedCards;
+                if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    card1.style.opacity = '0.5';
+                    card2.style.opacity = '0.5';
+                    matchedPairs++;
+                    canSelect = true;
+                    selectedCards = [];
+                    if (matchedPairs === gameData.length) {
+                        setTimeout(() => {
+                            Swal.fire({
+                                title: 'Selamat! 🎉',
+                                text: 'Kamu berhasil menyelesaikan permainan!',
+                                icon: 'success',
+                                confirmButtonColor: '#3b82f6',
+                                confirmButtonText: 'Main Lagi'
+                            }).then(initGame);
+                        }, 500);
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove('flipped');
+                        card2.classList.remove('flipped');
+                        card1.querySelector('.card-inner').style.transform = 'rotateY(0deg)';
+                        card2.querySelector('.card-inner').style.transform = 'rotateY(0deg)';
+                        canSelect = true;
+                        selectedCards = [];
+                    }, 1200);
+                }
+            }
+        });
+        return card;
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndStartGame);
+</script>
+</body>
+</html>
