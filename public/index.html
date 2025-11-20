@@ -13,22 +13,43 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen font-sans">
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
     <div class="container mx-auto px-4 py-8 md:py-12">
         <header class="text-center mb-12 animate-fade-in-up">
-            <h1 class="text-4xl md:text-5xl font-bold text-indigo-800 mb-2">E<span class="text-pink-500">Matching Cards</span></h1>
-            <p class="text-sm text-gray-700 mx-auto">&copy; 2025 | Ning</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-2">E-<span class="text-sky-600">Matching Cards</span></h1>
+            <p class="text-sm text-slate-500 mx-auto">&copy; 2025 | Ning</p>
         </header>
 
         <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <p id="loading-text" class="col-span-full text-center text-slate-500">Memuat topik...</p>
+            <!-- Skeleton Loader akan disisipkan di sini oleh JavaScript -->
         </div>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     const topicsGrid = document.getElementById('topics-grid');
-    const loadingText = document.getElementById('loading-text');
+
+    const showSkeletonLoader = () => {
+        let skeletons = '';
+        for (let i = 0; i < 3; i++) {
+            skeletons += `
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+                    <div class="aspect-video bg-slate-200"></div>
+                    <div class="p-6">
+                        <div class="h-6 bg-slate-200 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-slate-200 rounded w-full mb-2"></div>
+                        <div class="h-4 bg-slate-200 rounded w-5/6 mb-6"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="h-10 bg-slate-200 rounded-lg"></div>
+                            <div class="h-10 bg-slate-200 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+        topicsGrid.innerHTML = skeletons;
+    };
+
+    showSkeletonLoader();
 
     try {
         const response = await fetch('/api/topics');
@@ -36,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const topics = await response.json();
         
-        loadingText.style.display = 'none';
+        topicsGrid.innerHTML = ''; // Hapus skeleton loader
 
         if (topics.length === 0) {
             topicsGrid.innerHTML = `<p class="col-span-full text-center text-slate-500">Belum ada topik yang tersedia.</p>`;
@@ -45,17 +66,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         topics.forEach((topic, index) => {
             const cardHTML = `
-                <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden animate-fade-in-up" style="animation-delay: ${index * 0.1}s">
+                <div class="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up" style="animation-delay: ${index * 0.1}s">
                     <div class="relative overflow-hidden aspect-video">
                         <img src="${topic.thumbnail_url || 'https://via.placeholder.com/400x225.png?text=No+Image'}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" alt="${topic.title}">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
-                        <h2 class="text-xl font-bold text-slate-800 mb-2 capitalize">${topic.title}</h2>
-                        <p class="text-slate-600 text-sm mb-6 flex-grow">${topic.description}</p>
+                        <h2 class="text-xl font-bold text-slate-900 mb-2 capitalize">${topic.title}</h2>
+                        <p class="text-slate-600 text-sm mb-6 flex-grow">${topic.description || 'Tidak ada deskripsi.'}</p>
                         <div class="mt-auto grid grid-cols-2 gap-3">
-                            <a href="/game/${topic.category_slug}" class="text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all">Mulai Game</a>
-                            <a href="/quiz/${topic.category_slug}" class="text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-all">Mulai Kuis</a>
+                            <a href="/game/${topic.category_slug}" class="text-center bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">Mulai Game</a>
+                            <a href="/quiz/${topic.category_slug}" class="text-center bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">Mulai Kuis</a>
                         </div>
                     </div>
                 </div>
@@ -64,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
     } catch (error) {
-        loadingText.textContent = error.message;
+        topicsGrid.innerHTML = `<p class="col-span-full text-center text-red-500 font-semibold">${error.message}</p>`;
         console.error('Error fetching topics:', error);
     }
 });

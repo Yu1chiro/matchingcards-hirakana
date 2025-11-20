@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Matching Game</title>
+    <title>Kotoba Matching Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -15,132 +15,146 @@
                         'poppins': ['Poppins', 'sans-serif']
                     }
                 }
+            },
+            variants: {
+                extend: {
+                    transform: ['hover', 'focus', 'group-hover'],
+                },
             }
         }
     </script>
+    <style>
+        .card-inner {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            20%, 60% { transform: translateX(-4px) rotate(-2deg); }
+            40%, 80% { transform: translateX(4px) rotate(2deg); }
+        }
+      
+        .card.cleared .card-inner {
+            filter: grayscale(80%);
+            transform: scale(0.95) rotateY(180deg);
+            opacity: 0.7;
+        }
+    </style>
 </head>
-<body class="font-poppins bg-gradient-to-br from-blue-50 via-white to-blue-50 min-h-screen">
+<body class="font-poppins bg-slate-50 min-h-screen text-slate-800">
     
     <!-- Header dengan Back Button -->
-    <div class="bg-white shadow-sm border-b border-blue-100 sticky top-0 z-50">
+    <div class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between max-w-7xl mx-auto">
-                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium text-sm sm:text-base">
+                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-200 font-medium text-sm sm:text-base">
                     <i class="fas fa-arrow-left text-base sm:text-lg"></i>
                     <span class="hidden sm:inline">Kembali</span>
                 </button>
                 
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-slate-800 rounded-lg flex items-center justify-center shadow-sm">
                         <i class="fas fa-brain text-white text-lg sm:text-xl"></i>
                     </div>
                     <div class="hidden sm:block">
-                        <p class="text-xs text-gray-500 font-medium">Memory Game</p>
-                        <p class="text-sm text-blue-600 font-semibold">Kotoba Matching</p>
+                        <p class="text-xs text-slate-500 font-medium">Memory Game</p>
+                        <p class="text-sm text-sky-600 font-semibold">Kotoba Matching</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
-        
-        <!-- Title Section -->
-        <div class="text-center mb-6 sm:mb-8 lg:mb-10 animate-fade-in">
-            <div class="inline-block mb-3 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold">
-                <i class="fas fa-gamepad mr-2"></i>
-                MATCHING GAME
-            </div>
-            <h1 id="game-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-900 mb-2 sm:mb-3 capitalize tracking-tight">
-                Game Kotoba
-            </h1>
-            <p class="text-sm sm:text-base lg:text-lg text-gray-600 font-medium max-w-2xl mx-auto">
-                <i class="fas fa-puzzle-piece text-blue-500 mr-2"></i>
-                Cocokkan gambar dengan kosakata yang sesuai!
-            </p>
-        </div>
-
+    <!-- Main Content Wrapper -->
+    <div class="relative">
         <!-- Game Board Container -->
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border-2 border-blue-100 p-4 sm:p-6 lg:p-8">
-                
-                <!-- Info Bar -->
-                <div class="flex flex-wrap items-center justify-between gap-3 mb-5 sm:mb-6 pb-4 sm:pb-5 border-b-2 border-blue-50">
-                    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
-                        <i class="fas fa-layer-group text-blue-600 text-sm sm:text-base"></i>
-                        <span class="text-xs sm:text-sm font-semibold text-blue-900">Total Pasangan: <span id="total-pairs" class="text-blue-600">0</span></span>
-                    </div>
+        <div class="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8">
                     
-                    <button onclick="location.reload()" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-xs sm:text-sm font-semibold">
-                        <i class="fas fa-sync-alt"></i>
-                        <span class="hidden sm:inline">Mulai Ulang</span>
-                        <span class="sm:hidden">Ulang</span>
-                    </button>
+                    <!-- Info Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-5 sm:mb-6 pb-4 sm:pb-5 border-b border-slate-200">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg">
+                                <i class="fas fa-layer-group text-slate-600 text-sm sm:text-base"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-slate-800">Pasangan: <span id="matched-pairs" class="text-sky-600">0</span> / <span id="total-pairs">0</span></span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg">
+                                <i class="fas fa-star text-yellow-500 text-sm sm:text-base"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-slate-800">Skor: <span id="score" class="text-sky-600">0</span></span>
+                            </div>
+                        </div>
+                        
+                        <button onclick="initGame()" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="hidden sm:inline">Mulai Ulang</span>
+                            <span class="sm:hidden">Ulang</span>
+                        </button>
+                    </div>
+    
+                    <!-- Game Board Grid -->
+                    <div id="game-board" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4"></div>
                 </div>
-
-                <!-- Game Board Grid -->
-                <div id="game-board" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5"></div>
-
-                <!-- Loading State -->
-                <div id="loading" class="text-center py-12 hidden">
-                    <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
-                    <p class="text-gray-600 font-medium">Memuat permainan...</p>
-                </div>
-
             </div>
+        </div>
 
-            <!-- Instructions Card -->
-            <div class="mt-6 sm:mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-5 sm:p-6 border border-blue-200">
-                <h3 class="text-base sm:text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-info-circle text-blue-600"></i>
-                    Cara Bermain
-                </h3>
-                <ul class="space-y-2 text-xs sm:text-sm text-gray-700">
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                        <span>Klik kartu untuk membaliknya dan melihat isinya</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                        <span>Cocokkan gambar dengan kata bahasa Jepang yang sesuai</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                        <span>Selesaikan semua pasangan untuk memenangkan permainan!</span>
-                    </li>
-                </ul>
+        <!-- Success Notification -->
+        <div id="success-notification" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 text-center transform scale-95 opacity-0">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <i class="fas fa-trophy text-4xl text-green-500"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Permainan Selesai!</h2>
+                <p class="text-slate-600 mb-6">Skor akhir kamu adalah <strong id="final-score" class="text-sky-600 text-lg">0</strong>.</p>
+                <button onclick="initGame()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
+                    Main Lagi
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="text-center py-6 sm:py-8 text-xs sm:text-sm text-gray-500">
-        <p class="font-medium">
-            <i class="fas fa-graduation-cap text-blue-500 mr-1"></i>
-            Game Edukasi Bahasa Jepang
-        </p>
-    </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Tetap ada untuk error, tapi tidak untuk success -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
     let gameData = [];
     let selectedCards = [];
     let matchedPairs = 0;
+    let score = 0;
     let canSelect = true;
+
     const gameBoard = document.getElementById('game-board');
-    const gameTitle = document.getElementById('game-title');
+    const totalPairsEl = document.getElementById('total-pairs');
+    const matchedPairsEl = document.getElementById('matched-pairs');
+    const scoreEl = document.getElementById('score');
+    const successNotification = document.getElementById('success-notification');
+    const finalScoreEl = document.getElementById('final-score');
     const category = window.location.pathname.split('/').pop();
 
     async function fetchAndStartGame() {
+        const showSkeletonLoader = (count = 12) => {
+            gameBoard.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const skeletonCard = `
+                    <div class="aspect-[3/4] bg-slate-200 rounded-xl sm:rounded-2xl animate-pulse"></div>
+                `;
+                gameBoard.innerHTML += skeletonCard;
+            }
+        };
+        showSkeletonLoader();
+
         try {
             const res = await fetch(`/api/kotoba/${category}`);
             if (!res.ok) throw new Error('Data tidak ditemukan');
             const apiData = await res.json();
+            if (apiData.length === 0) throw new Error('Belum ada kartu untuk kategori ini.');
             gameData = apiData.map(item => ({ id: item.id, image: item.image_url, word: item.word_url }));
-            gameTitle.textContent = `${category} Kotoba Game`;
-            document.title = `${category.charAt(0).toUpperCase() + category.slice(1)} Game`;
-            document.getElementById('total-pairs').textContent = gameData.length;
             initGame();
         } catch (error) {
             gameBoard.innerHTML = `<p class="text-red-500 col-span-full text-center font-semibold py-8"><i class="fas fa-exclamation-triangle mr-2"></i>${error.message}</p>`;
@@ -149,9 +163,15 @@
 
     function initGame() {
         gameBoard.innerHTML = '';
+        successNotification.classList.add('hidden');
+        gsap.set(successNotification.querySelector('div'), { scale: 0.95, opacity: 0 });
+
         selectedCards = [];
         matchedPairs = 0;
+        score = 0;
         canSelect = true;
+        updateUI();
+
         let cards = [];
         gameData.forEach(item => {
             cards.push(createCard(item, 'image'));
@@ -161,65 +181,134 @@
         cards.forEach(card => gameBoard.appendChild(card));
     }
 
+    function updateUI() {
+        totalPairsEl.textContent = gameData.length;
+        matchedPairsEl.textContent = matchedPairs;
+        scoreEl.textContent = score;
+    }
+
     function createCard(item, type) {
         const card = document.createElement('div');
-        card.className = 'card cursor-pointer aspect-[3/4] relative';
+        card.className = 'card cursor-pointer aspect-[3/4] perspective-1000 relative overflow-hidden'; // Tambahkan relative dan overflow-hidden
         card.dataset.id = item.id;
         card.dataset.type = type;
         const content = type === 'image' ? `<img src="${item.image}" class="w-full h-full object-contain p-2">` : `<img src="${item.word}" class="w-full h-full object-contain p-2">`;
         card.innerHTML = `
-            <div class="card-inner w-full h-full relative transition-transform duration-700" style="transform-style: preserve-3d;">
-                <div class="card-front absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg" style="backface-visibility: hidden;">
+            <div class="card-inner w-full h-full relative">
+                <div class="card-front absolute w-full h-full bg-slate-700 hover:bg-slate-600 transition-colors duration-200 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md">
                     <i class="fas fa-question text-white text-3xl sm:text-4xl"></i>
                 </div>
-                <div class="card-back absolute w-full h-full bg-white rounded-xl sm:rounded-2xl border-2 border-blue-200 shadow-lg" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                <div class="card-back absolute w-full h-full bg-white rounded-xl sm:rounded-2xl border-2 border-sky-400 shadow-lg" style="transform: rotateY(180deg);">
                     ${content}
                 </div>
             </div>
         `;
         
-        card.addEventListener('click', () => {
-            if (!canSelect || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-            
-            card.classList.add('flipped');
-            card.querySelector('.card-inner').style.transform = 'rotateY(180deg)';
-            
-            selectedCards.push(card);
-            if (selectedCards.length === 2) {
-                canSelect = false;
-                const [card1, card2] = selectedCards;
-                if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
-                    card1.classList.add('matched');
-                    card2.classList.add('matched');
-                    card1.style.opacity = '0.5';
-                    card2.style.opacity = '0.5';
-                    matchedPairs++;
-                    canSelect = true;
-                    selectedCards = [];
-                    if (matchedPairs === gameData.length) {
-                        setTimeout(() => {
-                            Swal.fire({
-                                title: 'Selamat! 🎉',
-                                text: 'Kamu berhasil menyelesaikan permainan!',
-                                icon: 'success',
-                                confirmButtonColor: '#3b82f6',
-                                confirmButtonText: 'Main Lagi'
-                            }).then(initGame);
-                        }, 500);
-                    }
-                } else {
-                    setTimeout(() => {
-                        card1.classList.remove('flipped');
-                        card2.classList.remove('flipped');
-                        card1.querySelector('.card-inner').style.transform = 'rotateY(0deg)';
-                        card2.querySelector('.card-inner').style.transform = 'rotateY(0deg)';
-                        canSelect = true;
-                        selectedCards = [];
-                    }, 1200);
-                }
-            }
-        });
+        card.addEventListener('click', () => handleCardClick(card));
         return card;
+    }
+
+    function playSlashAnimation(cards, isMatch, onCompleteCallback) {
+        const elementsToAnimate = [];
+
+        cards.forEach(card => {
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 z-10';
+            overlay.style.backgroundColor = isMatch ? 'rgba(22, 163, 74, 0.4)' : 'rgba(220, 38, 38, 0.4)'; // Green or Red overlay
+            
+            const slash = document.createElement('div');
+            slash.className = 'absolute top-1/2 left-1/2 w-[150%] h-2 rounded-full z-20';
+            slash.style.backgroundColor = isMatch ? '#ffffff' : '#f87171'; // White or Light Red slash
+            slash.style.boxShadow = `0 0 12px 3px ${isMatch ? 'rgba(255,255,255,0.6)' : 'rgba(239, 68, 68, 0.6)'}`;
+
+            card.appendChild(overlay);
+            card.appendChild(slash);
+
+            elementsToAnimate.push(overlay, slash);
+
+            const randomAngle = -40 + Math.random() * 80;
+            gsap.set(slash, { transform: `translate(-50%, -50%) rotate(${randomAngle}deg)` });
+        });
+
+        const overlays = elementsToAnimate.filter((_, i) => i % 2 === 0);
+        const slashes = elementsToAnimate.filter((_, i) => i % 2 !== 0);
+
+        gsap.timeline({ 
+            onComplete: () => {
+                elementsToAnimate.forEach(el => el.remove());
+                if (onCompleteCallback) onCompleteCallback();
+            }
+        })
+        .fromTo(overlays, 
+            { opacity: 0 },
+            { duration: 0.1, opacity: 1, ease: 'power2.in' }
+        )
+        .fromTo(slashes,
+            { scaleX: 0, transformOrigin: 'left center' },
+            { duration: 0.2, scaleX: 1, ease: 'power2.out' },
+            "-=0.05" // Mulai sedikit setelah overlay muncul
+        )
+        .to(slashes,
+            { duration: 0.15, scaleX: 0, transformOrigin: 'right center', ease: 'power2.in' },
+            "+=0.1" // Jeda sebelum slash menghilang
+        )
+        .to(overlays,
+            { duration: 0.2, opacity: 0, ease: 'power2.out' },
+            "-=0.15" // Mulai fade out saat slash menghilang
+        );
+    }
+
+    function handleCardClick(card) {
+        if (!canSelect || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+        
+        card.classList.add('flipped');
+        selectedCards.push(card);
+
+        if (selectedCards.length === 2) {
+            canSelect = false;
+            const [card1, card2] = selectedCards;
+
+            if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
+                // --- KARTU COCOK ---
+                score += 100; // Tambah skor
+                matchedPairs++;
+                updateUI();
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+
+                playSlashAnimation([card1, card2], true, () => {
+                    // Callback setelah animasi selesai
+                    card1.classList.add('cleared');
+                    card2.classList.add('cleared');
+                    selectedCards = [];
+                    canSelect = true;
+                    if (matchedPairs === gameData.length) showSuccessNotification();
+                });
+
+            } else {
+                // --- KARTU TIDAK COCOK ---
+                score = Math.max(0, score - 25); // Kurangi skor, minimal 0
+                updateUI();
+                playSlashAnimation([card1, card2], false, () => {
+                    // Callback setelah animasi selesai
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    selectedCards = [];
+                    canSelect = true;
+                });
+            }
+        }
+    }
+
+    function showSuccessNotification() {
+        finalScoreEl.textContent = score;
+        successNotification.classList.remove('hidden');
+        gsap.to(successNotification.querySelector('div'), {
+            duration: 0.5,
+            scale: 1,
+            opacity: 1,
+            ease: 'elastic.out(1, 0.75)'
+        });
     }
 
     document.addEventListener('DOMContentLoaded', fetchAndStartGame);
