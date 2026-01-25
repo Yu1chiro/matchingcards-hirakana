@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
-    <!-- Header -->
     <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-40">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
@@ -31,9 +30,7 @@
     </header>
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <!-- Topic Management Card -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <!-- Card Header -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
@@ -46,74 +43,60 @@
                 </div>
             </div>
 
-            <!-- Form Section -->
             <div class="p-6 sm:p-8 bg-white">
                 <form id="topic-form" class="space-y-5">
                     <input type="hidden" id="topic-id">
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        <!-- Judul Topik -->
                         <div class="space-y-2">
                             <label for="topic-title" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                                 <i class="fas fa-heading text-slate-500"></i>
                                 <span>Judul Topik</span>
                             </label>
-                            <input type="text" id="topic-title" required 
-                                   placeholder="Contoh: Salam Sapa"
+                            <input type="text" id="topic-title" required placeholder="Contoh: Salam Sapa"
                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm sm:text-base">
                         </div>
 
-                        <!-- URL Kategori -->
                         <div class="space-y-2">
                             <label for="topic-slug" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                                 <i class="fas fa-link text-slate-500"></i>
                                 <span>URL Kategori</span>
                             </label>
-                            <input type="text" id="topic-slug" required 
-                                   placeholder="Contoh: aisatsu"
+                            <input type="text" id="topic-slug" required placeholder="Contoh: aisatsu"
                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 font-mono text-sm">
                         </div>
                     </div>
 
-                    <!-- URL Thumbnail -->
                     <div class="space-y-2">
                         <label for="topic-thumbnail" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                             <i class="fas fa-image text-slate-500"></i>
-                            <span>URL Thumbnail (Opsional)</span>
+                            <span>Upload Thumbnail</span>
                         </label>
-                        <input type="text" id="topic-thumbnail" 
-                               placeholder="https://example.com/image.jpg"
-                               class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm sm:text-base" value="">
+                        <input type="file" id="topic-thumbnail" accept="image/*"
+                               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                        <p id="topic-current-thumb" class="text-xs text-slate-500 truncate"></p>
                     </div>
 
-                    <!-- Deskripsi -->
                     <div class="space-y-2">
                         <label for="topic-description" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                             <i class="fas fa-align-left text-slate-500"></i>
                             <span>Deskripsi Singkat</span>
                         </label>
-                        <textarea id="topic-description" rows="3" 
-                                  placeholder="Jelaskan tentang topik ini..."
+                        <textarea id="topic-description" rows="3" placeholder="Jelaskan tentang topik ini..."
                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 resize-none text-sm sm:text-base"></textarea>
                     </div>
 
-                    <!-- Buttons -->
                     <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4">
-                        <button type="button" id="topic-cancel-btn" 
-                                class="hidden order-2 sm:order-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
-                            <i class="fas fa-times"></i>
-                            <span>Batal</span>
+                        <button type="button" id="topic-cancel-btn" class="hidden order-2 sm:order-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
+                            <i class="fas fa-times"></i><span>Batal</span>
                         </button>
-                        <button type="submit" id="topic-submit-btn" 
-                                class="order-1 sm:order-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Tambah Topik</span>
+                        <button type="submit" id="topic-submit-btn" class="order-1 sm:order-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base">
+                            <i class="fas fa-plus-circle"></i><span>Tambah Topik</span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Table Section -->
             <div class="px-6 pb-8">
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
                     <div id="topics-table-container" class="overflow-x-auto"></div>
@@ -122,10 +105,8 @@
         </div>
     </div>
 
-    <!-- Content Management Modal -->
     <div id="content-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden p-4">
         <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
-            <!-- Modal Header -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 rounded-t-2xl">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-3">
@@ -140,9 +121,7 @@
                 </div>
             </div>
 
-            <!-- Modal Content -->
             <div class="p-6 overflow-y-auto flex-1">
-                <!-- Kartu Game Section -->
                 <div class="bg-white rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center space-x-3 mb-5">
                         <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
@@ -155,33 +134,26 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                    <i class="fas fa-image text-slate-500 text-sm"></i>
-                                    <span>URL Gambar</span>
+                                    <i class="fas fa-image text-slate-500 text-sm"></i><span>Upload Gambar</span>
                                 </label>
-                                <input type="text" id="kotoba-image" required 
-                                       placeholder="https://example.com/image.jpg"
-                                       class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                                <input type="file" id="kotoba-image" required accept="image/*"
+                                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
                             </div>
                             <div class="space-y-2">
                                 <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                    <i class="fas fa-font text-slate-500 text-sm"></i>
-                                    <span>URL Kata</span>
+                                    <i class="fas fa-font text-slate-500 text-sm"></i><span>Upload Gambar Kata</span>
                                 </label>
-                                <input type="text" id="kotoba-word" required 
-                                       placeholder="https://example.com/word.mp3"
-                                       class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                                <input type="file" id="kotoba-word" required accept="image/*"
+                                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
                             </div>
                         </div>
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2 text-sm">
-                            <i class="fas fa-plus"></i>
-                            <span>Tambah Kartu</span>
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm">
+                            <i class="fas fa-plus"></i><span>Tambah Kartu</span>
                         </button>
                     </form>
-
                     <div id="kotoba-list" class="mt-5 space-y-2"></div>
                 </div>
 
-                <!-- Quiz Section -->
                 <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center space-x-3 mb-5">
                         <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
@@ -193,42 +165,32 @@
                     <form id="quiz-form" class="space-y-4">
                         <div class="space-y-2">
                             <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-question text-slate-500 text-sm"></i>
-                                <span>Pertanyaan</span>
+                                <i class="fas fa-question text-slate-500 text-sm"></i><span>Pertanyaan</span>
                             </label>
-                            <textarea id="quiz-question" required rows="3"
-                                      placeholder="Tulis pertanyaan kuis di sini..."
-                                      class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 resize-none text-sm"></textarea>
+                            <textarea id="quiz-question" required rows="2" placeholder="Tulis pertanyaan..."
+                                      class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 text-sm"></textarea>
                         </div>
 
                         <div class="space-y-2">
                             <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-image text-slate-500 text-sm"></i>
-                                <span>URL Gambar (Opsional)</span>
+                                <i class="fas fa-image text-slate-500 text-sm"></i><span>Upload Gambar (Opsional)</span>
                             </label>
-                            <input type="text" id="quiz-image" 
-                                   placeholder="https://example.com/quiz-image.jpg"
-                                   class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                            <input type="file" id="quiz-image" accept="image/*"
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="quiz-op-a" required placeholder="Pilihan A" 
-                                   class="px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
-                            <input type="text" id="quiz-op-b" required placeholder="Pilihan B" 
-                                   class="px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
-                            <input type="text" id="quiz-op-c" required placeholder="Pilihan C" 
-                                   class="px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
-                            <input type="text" id="quiz-op-d" required placeholder="Pilihan D" 
-                                   class="px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                            <input type="text" id="quiz-op-a" required placeholder="Pilihan A" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
+                            <input type="text" id="quiz-op-b" required placeholder="Pilihan B" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
+                            <input type="text" id="quiz-op-c" required placeholder="Pilihan C" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
+                            <input type="text" id="quiz-op-d" required placeholder="Pilihan D" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
                         </div>
 
                         <div class="space-y-2">
                             <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-check-circle text-slate-500 text-sm"></i>
-                                <span>Jawaban Benar</span>
+                                <i class="fas fa-check-circle text-slate-500 text-sm"></i><span>Jawaban Benar</span>
                             </label>
-                            <select id="quiz-correct" required 
-                                    class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
+                            <select id="quiz-correct" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
                                 <option value="a">Jawaban A</option>
                                 <option value="b">Jawaban B</option>
                                 <option value="c">Jawaban C</option>
@@ -236,12 +198,10 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2 text-sm">
-                            <i class="fas fa-plus"></i>
-                            <span>Tambah Soal</span>
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm">
+                            <i class="fas fa-plus"></i><span>Tambah Soal</span>
                         </button>
                     </form>
-
                     <div id="quiz-list" class="mt-5 space-y-2"></div>
                 </div>
             </div>
@@ -250,143 +210,188 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- State & Elements ---
     let currentTopicSlug = null;
-    const topicForm = document.getElementById('topic-form');
-    const topicsTableContainer = document.getElementById('topics-table-container');
-    const contentModal = document.getElementById('content-modal');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const modalTitle = document.getElementById('modal-title');
-    const kotobaForm = document.getElementById('kotoba-form');
-    const quizForm = document.getElementById('quiz-form');
-    const kotobaList = document.getElementById('kotoba-list');
-    const quizList = document.getElementById('quiz-list');
+    let existingThumbnailUrl = "";
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
 
-    // --- TOPIC MANAGEMENT ---
+    const Toast = Swal.mixin({
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true
+    });
+
     const fetchTopics = async () => {
         const res = await fetch('/api/admin/topics');
         const topics = await res.json();
-        let tableHTML = `<table class="min-w-full divide-y divide-slate-200"><thead class="bg-slate-100"><tr><th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"><i class="fas fa-book mr-2 text-slate-500"></i>Judul</th><th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell"><i class="fas fa-tag mr-2 text-slate-500"></i>Kategori</th><th class="px-4 sm:px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider"><i class="fas fa-cogs mr-2 text-slate-500"></i>Aksi</th></tr></thead><tbody class="bg-white divide-y divide-slate-100">`;
+        let tableHTML = `<table class="min-w-full divide-y divide-slate-200"><thead class="bg-slate-100"><tr><th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Judul</th><th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell">Kategori</th><th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">Aksi</th></tr></thead><tbody class="bg-white divide-y divide-slate-100">`;
         topics.forEach(t => {
-            tableHTML += `<tr data-id="${t.id}" data-title="${t.title}" data-slug="${t.category_slug}" data-desc="${t.description}" data-thumb="${t.thumbnail_url}" class="hover:bg-slate-50 transition-colors duration-150">
-                <td class="px-4 sm:px-6 py-4"><div class="flex items-center space-x-3"><div class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-book-open text-white text-sm"></i></div><div><div class="text-sm font-semibold text-slate-800">${t.title}</div><div class="text-xs text-slate-500 font-mono sm:hidden">${t.category_slug}</div></div></div></td>
-                <td class="px-4 sm:px-6 py-4 font-mono text-sm text-slate-600 hidden sm:table-cell"><span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">${t.category_slug}</span></td>
-                <td class="px-4 sm:px-6 py-4"><div class="flex flex-col sm:flex-row items-center justify-center gap-2"><button class="manage-content-btn w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 text-xs font-semibold rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-1"><i class="fas fa-folder-open"></i><span>Konten</span></button><button class="edit-topic-btn w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 text-xs font-semibold rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-1"><i class="fas fa-edit"></i><span>Edit</span></button><button class="delete-topic-btn w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-3 py-2 text-xs font-semibold rounded-md transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-1"><i class="fas fa-trash"></i><span>Hapus</span></button></div></td></tr>`;
+            tableHTML += `<tr data-id="${t.id}" data-title="${t.title}" data-slug="${t.category_slug}" data-desc="${t.description}" data-thumb="${t.thumbnail_url}" class="hover:bg-slate-50">
+                <td class="px-6 py-4"><div class="flex items-center space-x-3"><img src="${t.thumbnail_url}" class="w-10 h-10 rounded object-cover border"><div class="text-sm font-semibold text-slate-800">${t.title}</div></div></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">${t.category_slug}</span></td>
+                <td class="px-6 py-4"><div class="flex flex-col sm:flex-row items-center justify-center gap-2"><button class="manage-content-btn bg-sky-600 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-folder-open"></i></button><button class="edit-topic-btn bg-yellow-500 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-edit"></i></button><button class="delete-topic-btn bg-red-600 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-trash"></i></button></div></td></tr>`;
         });
         tableHTML += `</tbody></table>`;
-        topicsTableContainer.innerHTML = tableHTML;
+        document.getElementById('topics-table-container').innerHTML = tableHTML;
     };
-    const resetTopicForm = () => {
-        topicForm.reset();
-        document.getElementById('topic-id').value = '';
-        document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-plus-circle mr-2"></i><span>Tambah Topik</span>';
-        document.getElementById('topic-cancel-btn').classList.add('hidden');
-    };
-    topicForm.addEventListener('submit', async e => {
+
+    document.getElementById('topic-form').addEventListener('submit', async e => {
         e.preventDefault();
+        Swal.fire({ title: 'Sedang memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        
         const id = document.getElementById('topic-id').value;
-        const payload = { title: document.getElementById('topic-title').value, category_slug: document.getElementById('topic-slug').value, description: document.getElementById('topic-description').value, thumbnail_url: document.getElementById('topic-thumbnail').value };
+        const fileInput = document.getElementById('topic-thumbnail');
+        let thumbnail_url = existingThumbnailUrl;
+
+        if (fileInput.files.length > 0) {
+            thumbnail_url = await toBase64(fileInput.files[0]);
+        }
+
+        const payload = {
+            title: document.getElementById('topic-title').value,
+            category_slug: document.getElementById('topic-slug').value,
+            description: document.getElementById('topic-description').value,
+            thumbnail_url
+        };
+
         const url = id ? `/api/admin/topics/${id}` : '/api/admin/topics';
-        const method = id ? 'PUT' : 'POST';
-        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        Toast.fire({ icon: 'success', title: id ? 'Topik berhasil diupdate!' : 'Topik berhasil ditambahkan!' });
+        await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        
+        Swal.close();
+        Toast.fire({ icon: 'success', title: 'Data berhasil disimpan!' });
         resetTopicForm();
         fetchTopics();
     });
-    document.getElementById('topic-cancel-btn').addEventListener('click', resetTopicForm);
-    topicsTableContainer.addEventListener('click', e => {
+
+    const resetTopicForm = () => {
+        document.getElementById('topic-form').reset();
+        document.getElementById('topic-id').value = '';
+        document.getElementById('topic-current-thumb').textContent = '';
+        existingThumbnailUrl = "";
+        document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-plus-circle"></i><span>Tambah Topik</span>';
+        document.getElementById('topic-cancel-btn').classList.add('hidden');
+    };
+
+    document.getElementById('topics-table-container').addEventListener('click', e => {
         const row = e.target.closest('tr');
         if (!row) return;
         const id = row.dataset.id;
-        if (e.target.closest('.delete-topic-btn')) {
-            Swal.fire({ title: 'Hapus Topik?', text: 'Semua kartu dan kuis di dalamnya akan ikut terhapus!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal' }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/topics/${id}`, { method: 'DELETE' }).then(() => { Toast.fire({ icon: 'success', title: 'Topik berhasil dihapus!' }); fetchTopics(); });
-                }
-            });
-        }
         if (e.target.closest('.edit-topic-btn')) {
             document.getElementById('topic-id').value = id;
             document.getElementById('topic-title').value = row.dataset.title;
             document.getElementById('topic-slug').value = row.dataset.slug;
             document.getElementById('topic-description').value = row.dataset.desc;
-            document.getElementById('topic-thumbnail').value = row.dataset.thumb;
-            document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-save mr-2"></i><span>Update Topik</span>';
+            document.getElementById('topic-current-thumb').textContent = "Gambar saat ini: " + row.dataset.thumb;
+            existingThumbnailUrl = row.dataset.thumb;
+            document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-save"></i><span>Update Topik</span>';
             document.getElementById('topic-cancel-btn').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
         if (e.target.closest('.manage-content-btn')) {
             currentTopicSlug = row.dataset.slug;
-            modalTitle.textContent = `Kelola Konten: ${row.dataset.title}`;
-            contentModal.classList.remove('hidden');
+            document.getElementById('modal-title').textContent = `Kelola Konten: ${row.dataset.title}`;
+            document.getElementById('content-modal').classList.remove('hidden');
             loadContentForTopic(currentTopicSlug);
         }
+        if (e.target.closest('.delete-topic-btn')) {
+            Swal.fire({ title: 'Hapus Topik?', text: 'Data tidak bisa dikembalikan!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/admin/topics/${id}`, { method: 'DELETE' }).then(() => { fetchTopics(); Toast.fire({ icon: 'success', title: 'Berhasil dihapus!' }); });
+                }
+            });
+        }
     });
 
-    // --- CONTENT (MODAL) MANAGEMENT ---
     const loadContentForTopic = async (slug) => {
-        // Load Kotoba
-        const kotobaRes = await fetch(`/api/admin/kotoba/${slug}`);
+        const [kotobaRes, quizRes] = await Promise.all([
+            fetch(`/api/admin/kotoba/${slug}`),
+            fetch(`/api/admin/quizzes/${slug}`)
+        ]);
         const kotobaData = await kotobaRes.json();
-        kotobaList.innerHTML = '';
-        kotobaData.forEach((k, index) => { // ... (UI for kotoba list items)
-            kotobaList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-all duration-200"><div class="flex items-center space-x-3 flex-1 min-w-0"><div class="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-bold">${index + 1}</span></div><div class="flex-1 min-w-0"><div class="text-xs text-slate-500 mb-1">Gambar:</div><div class="text-sm text-slate-700 truncate">${k.image_url}</div><div class="text-xs text-slate-500 mt-2 mb-1">Kata:</div><div class="text-sm text-slate-700 truncate">${k.word_url}</div></div></div><button data-id="${k.id}" class="delete-kotoba-btn ml-3 w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all duration-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-trash text-sm"></i></button></div>`;
-        });
-        // Load Quizzes
-        const quizRes = await fetch(`/api/admin/quizzes/${slug}`);
         const quizData = await quizRes.json();
+
+        const kotobaList = document.getElementById('kotoba-list');
+        kotobaList.innerHTML = '';
+        kotobaData.forEach((k, i) => {
+            kotobaList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border">
+                <div class="flex items-center space-x-3 truncate">
+                    <img src="${k.image_url}" class="w-10 h-10 rounded border object-cover">
+                    <img src="${k.word_url}" class="w-10 h-10 rounded border object-cover">
+                    <span class="text-xs text-slate-500">Kartu #${i+1}</span>
+                </div>
+                <button data-id="${k.id}" class="delete-kotoba-btn text-red-600 p-2"><i class="fas fa-trash"></i></button>
+            </div>`;
+        });
+
+        const quizList = document.getElementById('quiz-list');
         quizList.innerHTML = '';
-        quizData.forEach((q, index) => { // ... (UI for quiz list items)
-            quizList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-all duration-200"><div class="flex items-center space-x-3 flex-1 min-w-0"><div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-bold">${index + 1}</span></div><div class="flex-1 min-w-0"><div class="text-sm font-medium text-slate-700 line-clamp-2">${q.question}</div><div class="flex items-center space-x-2 mt-2"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold"><i class="fas fa-check-circle mr-1"></i>Jawaban: ${q.correct_answer.toUpperCase()}</span></div></div></div><button data-id="${q.id}" class="delete-quiz-btn ml-3 w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all duration-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-trash text-sm"></i></button></div>`;
+        quizData.forEach((q, i) => {
+            quizList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border">
+                <div class="truncate">
+                    <p class="text-sm font-bold text-slate-700 truncate">${q.question}</p>
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Jawaban: ${q.correct_answer.toUpperCase()}</span>
+                </div>
+                <button data-id="${q.id}" class="delete-quiz-btn text-red-600 p-2"><i class="fas fa-trash"></i></button>
+            </div>`;
         });
     };
-    closeModalBtn.addEventListener('click', () => contentModal.classList.add('hidden'));
-    kotobaForm.addEventListener('submit', async e => {
+
+    document.getElementById('kotoba-form').addEventListener('submit', async e => {
         e.preventDefault();
-        const payload = { category_slug: currentTopicSlug, image_url: document.getElementById('kotoba-image').value, word_url: document.getElementById('kotoba-word').value };
+        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        const imgFile = document.getElementById('kotoba-image').files[0];
+        const wordFile = document.getElementById('kotoba-word').files[0];
+        
+        const payload = {
+            category_slug: currentTopicSlug,
+            image_url: await toBase64(imgFile),
+            word_url: await toBase64(wordFile)
+        };
+
         await fetch('/api/admin/kotoba', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        Toast.fire({ icon: 'success', title: 'Kartu berhasil ditambahkan!' });
-        kotobaForm.reset();
+        Swal.close();
+        document.getElementById('kotoba-form').reset();
         loadContentForTopic(currentTopicSlug);
     });
-    quizForm.addEventListener('submit', async e => {
+
+    document.getElementById('quiz-form').addEventListener('submit', async e => {
         e.preventDefault();
-        const payload = { category_slug: currentTopicSlug, question: document.getElementById('quiz-question').value, image_url: document.getElementById('quiz-image').value, option_a: document.getElementById('quiz-op-a').value, option_b: document.getElementById('quiz-op-b').value, option_c: document.getElementById('quiz-op-c').value, option_d: document.getElementById('quiz-op-d').value, correct_answer: document.getElementById('quiz-correct').value };
+        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        const quizFile = document.getElementById('quiz-image').files[0];
+        
+        const payload = {
+            category_slug: currentTopicSlug,
+            question: document.getElementById('quiz-question').value,
+            image_url: quizFile ? await toBase64(quizFile) : null,
+            option_a: document.getElementById('quiz-op-a').value,
+            option_b: document.getElementById('quiz-op-b').value,
+            option_c: document.getElementById('quiz-op-c').value,
+            option_d: document.getElementById('quiz-op-d').value,
+            correct_answer: document.getElementById('quiz-correct').value
+        };
+
         await fetch('/api/admin/quizzes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        Toast.fire({ icon: 'success', title: 'Soal kuis berhasil ditambahkan!' });
-        quizForm.reset();
+        Swal.close();
+        document.getElementById('quiz-form').reset();
         loadContentForTopic(currentTopicSlug);
     });
-    contentModal.addEventListener('click', e => {
-        if(e.target.closest('.delete-kotoba-btn')){
-            Swal.fire({ title: 'Hapus Kartu?', text: 'Kartu ini akan dihapus permanen!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal' }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/kotoba/${e.target.closest('.delete-kotoba-btn').dataset.id}`, { method: 'DELETE' }).then(() => { Toast.fire({ icon: 'success', title: 'Kartu berhasil dihapus!' }); loadContentForTopic(currentTopicSlug); });
-                }
-            });
-        }
-        if(e.target.closest('.delete-quiz-btn')){
-            Swal.fire({ title: 'Hapus Soal?', text: 'Soal kuis ini akan dihapus permanen!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal' }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/quizzes/${e.target.closest('.delete-quiz-btn').dataset.id}`, { method: 'DELETE' }).then(() => { Toast.fire({ icon: 'success', title: 'Soal berhasil dihapus!' }); loadContentForTopic(currentTopicSlug); });
-                }
-            });
+
+    document.getElementById('content-modal').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const url = btn.classList.contains('delete-kotoba-btn') ? `/api/admin/kotoba/${id}` : btn.classList.contains('delete-quiz-btn') ? `/api/admin/quizzes/${id}` : null;
+        if (url) {
+            fetch(url, { method: 'DELETE' }).then(() => loadContentForTopic(currentTopicSlug));
         }
     });
 
-    // --- Initial Load ---
+    document.getElementById('close-modal-btn').onclick = () => document.getElementById('content-modal').classList.add('hidden');
+    document.getElementById('topic-cancel-btn').onclick = resetTopicForm;
+
     fetchTopics();
 });
 </script>
