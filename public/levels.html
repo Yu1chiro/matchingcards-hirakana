@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Level</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-16 flex items-center gap-4 max-w-2xl">
+            <a href="/" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition active:scale-90">
+                <i class="fas fa-arrow-left text-lg"></i>
+            </a>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Topik</p>
+                <h1 id="topic-title" class="text-lg font-display font-bold text-slate-800 truncate">Memuat...</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 max-w-2xl pb-20">
+        
+        <div class="mb-6">
+            <h2 class="text-xl font-bold text-slate-700 mb-1">Pilih Bagian</h2>
+            <p class="text-sm text-slate-500">Selesaikan materinya satu per satu ya!</p>
+        </div>
+
+        <div id="levels-list" class="space-y-4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-32"></div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-32"></div>
+        </div>
+
+    </main>
+
+<script>
+    // Ambil Parameter URL
+    const params = new URLSearchParams(window.location.search);
+    const topicId = params.get('topic_id');
+    const topicTitle = params.get('title');
+
+    // Set Judul
+    document.getElementById('topic-title').textContent = topicTitle || 'Materi';
+
+    if (!topicId) {
+        alert("Topik tidak ditemukan!");
+        window.location.href = '/';
+    }
+
+    async function loadLevels() {
+        const container = document.getElementById('levels-list');
+        
+        try {
+            const res = await fetch(`/api/topics/${topicId}/levels`);
+            if(!res.ok) throw new Error("Gagal fetch");
+            const levels = await res.json();
+
+            container.innerHTML = '';
+
+            if (levels.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 text-2xl">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-600">Belum ada Part/Level</h3>
+                        <p class="text-sm text-slate-400 mt-1">Admin belum menambahkan konten di topik ini.</p>
+                        <a href="/" class="inline-block mt-4 px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-sm font-bold transition">Kembali</a>
+                    </div>`;
+                return;
+            }
+
+            levels.forEach((lvl, idx) => {
+                const card = `
+                    <div class="bg-white rounded-2xl p-1 shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-all duration-300">
+                        <div class="p-5 border-b border-slate-50 bg-gradient-to-r from-white to-slate-50/50">
+                            <div class="flex items-center gap-3 mb-1">
+                                <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                                    PART ${idx + 1}
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-display font-bold text-slate-800">${lvl.title}</h3>
+                        </div>
+                        
+                        <div class="p-4 grid grid-cols-2 gap-3 bg-white">
+                            <a href="/game/${lvl.id}" class="group relative overflow-hidden bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-white rounded-xl p-3 text-center transition-all active:scale-95 shadow-lg shadow-slate-200">
+                                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fas fa-gamepad text-xl mb-1 block text-blue-300 group-hover:text-white transition-colors"></i>
+                                <span class="text-sm font-bold block">Main Game</span>
+                                <span class="text-[10px] opacity-70 block font-light">Cocokkan Kartu</span>
+                            </a>
+
+                            <a href="/quiz/${lvl.id}" class="group relative overflow-hidden bg-white border-2 border-slate-100 hover:border-blue-300 hover:bg-blue-50 text-slate-700 rounded-xl p-3 text-center transition-all active:scale-95">
+                                <i class="fas fa-question-circle text-xl mb-1 block text-blue-500 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-sm font-bold block group-hover:text-blue-700">Mulai Kuis</span>
+                                <span class="text-[10px] text-slate-400 block font-light group-hover:text-blue-500/70">Soal Pilihan Ganda</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<div class="text-center text-red-500 py-4">Gagal memuat data level.</div>`;
+        }
+    }
+
+    loadLevels();
+</script>
+</body>
+</html>

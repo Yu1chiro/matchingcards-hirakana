@@ -7,393 +7,557 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        slate: { 850: '#1e293b' } // Custom dark for accents
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar untuk area sempit */
+        .scroller::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scroller::-webkit-scrollbar-track { background: transparent; }
+        .scroller::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800">
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-40">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-cog text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-                        <p class="text-xs text-slate-500 hidden sm:block">Kelola Konten Pembelajaran</p>
-                    </div>
+<body class="bg-gray-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-white text-sm shadow-sm">
+                    <i class="fas fa-shapes"></i>
                 </div>
-                <a href="/logout" class="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg transition-all duration-200 text-sm sm:text-base">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="hidden sm:inline">Logout</span>
-                </a>
+                <span class="font-bold text-slate-800 tracking-tight">Content <span class="text-blue-600">Manager </span></span>
             </div>
+            <a href="/logout" class="text-xs font-semibold text-slate-500 hover:text-red-600 transition-colors flex items-center gap-1.5 bg-gray-100 hover:bg-red-50 px-3 py-1.5 rounded-lg">
+                <i class="fas fa-power-off"></i> Logout
+            </a>
         </div>
-    </header>
+    </nav>
 
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-layer-group text-white text-lg"></i>
-                    </div>
+    <main class="flex-1 container mx-auto px-4 py-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-4 space-y-6">
+                
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-bold text-white">Kelola Topik Pembelajaran</h2>
-                        <p class="text-blue-100 text-xs sm:text-sm mt-1">Tambah, edit, dan hapus topik pembelajaran</p>
+                        <h1 class="text-lg font-bold text-slate-800">Welcome Ning 👋</h1>
+                        <p class="text-xs text-slate-500 mt-1">Kelola materi pembelajaranmu di sini.</p>
                     </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
+                        <i class="fas fa-plus-circle text-blue-600"></i>
+                        <h2 class="text-sm font-bold text-slate-700">Tambah Topik Baru</h2>
+                    </div>
+                    
+                    <form id="topic-form" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Judul Bab</label>
+                            <input type="text" id="topic-title" placeholder="Cth: Bab 1 Perkenalan" class="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Slug URL</label>
+                            <input type="text" id="topic-slug" placeholder="Cth: bab-1" class="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Thumbnail</label>
+                            <input type="file" id="topic-thumbnail" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Deskripsi</label>
+                            <textarea id="topic-desc" rows="2" placeholder="Deskripsi singkat..." class="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-save"></i> Simpan Topik
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <div class="p-6 sm:p-8 bg-white">
-                <form id="topic-form" class="space-y-5">
-                    <input type="hidden" id="topic-id">
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        <div class="space-y-2">
-                            <label for="topic-title" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-                                <i class="fas fa-heading text-slate-500"></i>
-                                <span>Judul Topik</span>
-                            </label>
-                            <input type="text" id="topic-title" required placeholder="Contoh: Salam Sapa"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm sm:text-base">
-                        </div>
+            <div class="lg:col-span-8">
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm h-full">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-base font-bold text-slate-700 flex items-center gap-2">
+                            <i class="fas fa-book text-blue-500"></i> Daftar Materi
+                        </h2>
+                        <button onclick="fetchTopics()" class="text-xs text-slate-500 hover:text-blue-600 bg-gray-50 px-2 py-1 rounded-lg transition"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
 
-                        <div class="space-y-2">
-                            <label for="topic-slug" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-                                <i class="fas fa-link text-slate-500"></i>
-                                <span>URL Kategori</span>
-                            </label>
-                            <input type="text" id="topic-slug" required placeholder="Contoh: aisatsu"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 font-mono text-sm">
+                    <div id="topics-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="animate-pulse flex space-x-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <div class="rounded-lg bg-gray-200 h-12 w-12"></div>
+                            <div class="flex-1 space-y-2 py-1">
+                                <div class="h-2 bg-gray-200 rounded"></div>
+                                <div class="h-2 bg-gray-200 rounded w-3/4"></div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="space-y-2">
-                        <label for="topic-thumbnail" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-                            <i class="fas fa-image text-slate-500"></i>
-                            <span>Upload Thumbnail</span>
-                        </label>
-                        <input type="file" id="topic-thumbnail" accept="image/*"
-                               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 text-sm">
-                        <p id="topic-current-thumb" class="text-xs text-slate-500 truncate"></p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="topic-description" class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-                            <i class="fas fa-align-left text-slate-500"></i>
-                            <span>Deskripsi Singkat</span>
-                        </label>
-                        <textarea id="topic-description" rows="3" placeholder="Jelaskan tentang topik ini..."
-                                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all duration-200 resize-none text-sm sm:text-base"></textarea>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4">
-                        <button type="button" id="topic-cancel-btn" class="hidden order-2 sm:order-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
-                            <i class="fas fa-times"></i><span>Batal</span>
-                        </button>
-                        <button type="submit" id="topic-submit-btn" class="order-1 sm:order-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base">
-                            <i class="fas fa-plus-circle"></i><span>Tambah Topik</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="px-6 pb-8">
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
-                    <div id="topics-table-container" class="overflow-x-auto"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="content-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 rounded-t-2xl">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-cog text-white text-lg"></i>
-                        </div>
-                        <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white">Kelola Konten</h2>
-                    </div>
-                    <button id="close-modal-btn" class="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all duration-200 flex items-center justify-center">
-                        <i class="fas fa-times text-white text-xl"></i>
-                    </button>
+    <div id="content-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white w-full max-w-5xl h-[90vh] sm:h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+            
+            <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-white">
+                <div>
+                    <h3 id="modal-title" class="text-sm sm:text-base font-bold text-slate-800">Kelola Konten</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-500">Atur Level, Kartu, dan Kuis</p>
                 </div>
+                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 transition">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
             </div>
 
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="bg-white rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
-                    <div class="flex items-center space-x-3 mb-5">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-gamepad text-white"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-blue-700">Kartu Game (Kotoba)</h3>
-                    </div>
+            <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
+                
+                <div class="w-full md:w-64 lg:w-72 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col shrink-0">
                     
-                    <form id="kotoba-form" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                    <i class="fas fa-image text-slate-500 text-sm"></i><span>Upload Gambar</span>
-                                </label>
-                                <input type="file" id="kotoba-image" required accept="image/*"
-                                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                    <i class="fas fa-font text-slate-500 text-sm"></i><span>Upload Gambar Kata</span>
-                                </label>
-                                <input type="file" id="kotoba-word" required accept="image/*"
-                                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
-                            </div>
+                    <div class="p-3 border-b border-gray-200 bg-white/50">
+                        <form id="level-form" class="flex gap-2">
+                            <input type="text" id="level-title" placeholder="Nama Part..." class="flex-1 text-xs px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:outline-none" required>
+                            <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs shadow-sm transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="levels-list" class="flex-1 overflow-y-auto scroller p-2 space-y-1.5 md:space-y-2">
                         </div>
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm">
-                            <i class="fas fa-plus"></i><span>Tambah Kartu</span>
-                        </button>
-                    </form>
-                    <div id="kotoba-list" class="mt-5 space-y-2"></div>
                 </div>
 
-                <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-                    <div class="flex items-center space-x-3 mb-5">
-                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-question-circle text-white"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-green-700">Soal Kuis</h3>
-                    </div>
+                <div id="content-area" class="flex-1 bg-white overflow-y-auto scroller p-4 sm:p-6 relative">
                     
-                    <form id="quiz-form" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-question text-slate-500 text-sm"></i><span>Pertanyaan</span>
-                            </label>
-                            <textarea id="quiz-question" required rows="2" placeholder="Tulis pertanyaan..."
-                                      class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:border-sky-500 text-sm"></textarea>
+                    <div id="no-level-selected" class="flex flex-col items-center justify-center h-full text-center text-slate-400 p-8">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-layer-group text-2xl text-gray-300"></i>
+                        </div>
+                        <p class="text-sm font-medium">Pilih atau buat "Part" di panel <span class="md:hidden">atas</span><span class="hidden md:inline">kiri</span> untuk mulai.</p>
+                    </div>
+
+                    <div id="active-level-content" class="hidden max-w-3xl mx-auto">
+                        
+                        <div class="flex items-center justify-between mb-6 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-sm font-bold">
+                                    <i class="fas fa-folder-open"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-bold text-slate-800" id="current-level-name">Part Name</h2>
+                                    <p class="text-xs text-slate-500">Edit konten untuk bagian ini</p>
+                                </div>
+                            </div>
+                            <button onclick="deleteCurrentLevel()" class="text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                                <i class="far fa-trash-alt"></i> Hapus Part
+                            </button>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-image text-slate-500 text-sm"></i><span>Upload Gambar (Opsional)</span>
-                            </label>
-                            <input type="file" id="quiz-image" accept="image/*"
-                                   class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:border-sky-500 text-sm">
+                        <div class="bg-gray-100 p-1 rounded-xl flex mb-6">
+                            <button onclick="switchTab('kotoba')" id="tab-kotoba" class="flex-1 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-slate-800 transition-all">
+                                <i class="fas fa-gamepad mr-1.5"></i>Game Kartu
+                            </button>
+                            <button onclick="switchTab('quiz')" id="tab-quiz" class="flex-1 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 transition-all">
+                                <i class="fas fa-question-circle mr-1.5"></i>Soal Kuis
+                            </button>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="quiz-op-a" required placeholder="Pilihan A" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
-                            <input type="text" id="quiz-op-b" required placeholder="Pilihan B" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
-                            <input type="text" id="quiz-op-c" required placeholder="Pilihan C" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
-                            <input type="text" id="quiz-op-d" required placeholder="Pilihan D" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
+                        <div id="panel-kotoba" class="animate-fade-in">
+                            <form id="kotoba-form" class="mb-6 p-4 rounded-xl border border-gray-200 bg-white shadow-sm space-y-3">
+                                <h4 class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Upload Kartu Baru</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Gambar Benda (No Teks)</label>
+                                        <input type="file" id="kotoba-img" required class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Gambar Tulisan (Teks)</label>
+                                        <input type="file" id="kotoba-word" required class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold transition shadow-sm">
+                                    <i class="fas fa-cloud-upload-alt mr-1"></i> Upload Kartu
+                                </button>
+                            </form>
+                            
+                            <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Kartu</div>
+                            <div id="kotoba-items" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-2 text-xs font-semibold text-gray-600">
-                                <i class="fas fa-check-circle text-slate-500 text-sm"></i><span>Jawaban Benar</span>
-                            </label>
-                            <select id="quiz-correct" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm">
-                                <option value="a">Jawaban A</option>
-                                <option value="b">Jawaban B</option>
-                                <option value="c">Jawaban C</option>
-                                <option value="d">Jawaban D</option>
-                            </select>
+                        <div id="panel-quiz" class="hidden animate-fade-in">
+                            <form id="quiz-form" class="mb-6 p-4 rounded-xl border border-gray-200 bg-white shadow-sm space-y-3">
+                                <h4 class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Buat Soal Baru</h4>
+                                
+                                <textarea id="quiz-q" placeholder="Tulis pertanyaan di sini..." class="w-full text-sm p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-green-500 transition resize-none" rows="2" required></textarea>
+                                
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Gambar Soal (Opsional)</label>
+                                    <input type="file" id="quiz-img" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <input type="text" id="op-a" placeholder="Opsi A" class="text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-green-500 focus:outline-none" required>
+                                    <input type="text" id="op-b" placeholder="Opsi B" class="text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-green-500 focus:outline-none" required>
+                                    <input type="text" id="op-c" placeholder="Opsi C" class="text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-green-500 focus:outline-none" required>
+                                    <input type="text" id="op-d" placeholder="Opsi D" class="text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-green-500 focus:outline-none" required>
+                                </div>
+                                
+                                <select id="correct-op" class="w-full text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-green-500 focus:outline-none font-medium">
+                                    <option value="a">Kunci Jawaban: A</option>
+                                    <option value="b">Kunci Jawaban: B</option>
+                                    <option value="c">Kunci Jawaban: C</option>
+                                    <option value="d">Kunci Jawaban: D</option>
+                                </select>
+                                
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-semibold transition shadow-sm">
+                                    <i class="fas fa-plus-circle mr-1"></i> Simpan Soal
+                                </button>
+                            </form>
+
+                            <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Soal</div>
+                            <div id="quiz-items" class="space-y-2">
+                                </div>
                         </div>
 
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm">
-                            <i class="fas fa-plus"></i><span>Tambah Soal</span>
-                        </button>
-                    </form>
-                    <div id="quiz-list" class="mt-5 space-y-2"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    let currentTopicSlug = null;
-    let existingThumbnailUrl = "";
+    let currentTopicId = null;
+    let currentLevelId = null;
 
+    // --- UTILS ---
     const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
     });
+    
+    // --- API HANDLER ---
+    async function apiFetch(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            if (res.status === 401) { window.location.href = '/login'; return null; }
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                if (!res.ok) throw new Error((await res.json()).error || 'Error');
+                return await res.json();
+            }
+            throw new Error("Server Error (Not JSON)");
+        } catch (error) {
+            Swal.fire({icon: 'error', title: 'Oops...', text: error.message, toast: true, position: 'top-end', timer: 3000, showConfirmButton: false});
+            throw error;
+        }
+    }
+    
+    // --- TOPICS ---
+    async function fetchTopics() {
+        const topics = await apiFetch('/api/admin/topics');
+        if (!topics) return;
+        const container = document.getElementById('topics-list');
+        
+        if(topics.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-8 text-slate-400 text-xs border border-dashed border-gray-200 rounded-xl bg-gray-50">Belum ada topik. Tambahkan di panel kiri.</div>`;
+            return;
+        }
+        
+        container.innerHTML = topics.map(t => `
+            <div class="group bg-white p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex gap-3 relative overflow-hidden">
+                <div class="w-16 h-16 shrink-0 rounded-lg bg-gray-100 overflow-hidden border border-gray-100">
+                    <img src="${t.thumbnail_url || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                    <h3 class="text-sm font-bold text-slate-800 truncate mb-0.5">${t.title}</h3>
+                    <p class="text-[10px] text-slate-500 truncate mb-2">${t.description || 'Tidak ada deskripsi'}</p>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openManager(${t.id}, '${t.title}')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-[10px] py-1.5 px-2 rounded-lg font-medium transition text-center">
+                            Kelola Isi
+                        </button>
+                        <button onclick="deleteTopic(${t.id})" class="w-7 h-7 flex items-center justify-center bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-500 rounded-lg transition">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 
-    const Toast = Swal.mixin({
-        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true
-    });
-
-    const fetchTopics = async () => {
-        const res = await fetch('/api/admin/topics');
-        const topics = await res.json();
-        let tableHTML = `<table class="min-w-full divide-y divide-slate-200"><thead class="bg-slate-100"><tr><th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Judul</th><th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell">Kategori</th><th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">Aksi</th></tr></thead><tbody class="bg-white divide-y divide-slate-100">`;
-        topics.forEach(t => {
-            tableHTML += `<tr data-id="${t.id}" data-title="${t.title}" data-slug="${t.category_slug}" data-desc="${t.description}" data-thumb="${t.thumbnail_url}" class="hover:bg-slate-50">
-                <td class="px-6 py-4"><div class="flex items-center space-x-3"><img src="${t.thumbnail_url}" class="w-10 h-10 rounded object-cover border"><div class="text-sm font-semibold text-slate-800">${t.title}</div></div></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">${t.category_slug}</span></td>
-                <td class="px-6 py-4"><div class="flex flex-col sm:flex-row items-center justify-center gap-2"><button class="manage-content-btn bg-sky-600 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-folder-open"></i></button><button class="edit-topic-btn bg-yellow-500 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-edit"></i></button><button class="delete-topic-btn bg-red-600 text-white px-3 py-2 text-xs font-semibold rounded-md shadow-sm"><i class="fas fa-trash"></i></button></div></td></tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-        document.getElementById('topics-table-container').innerHTML = tableHTML;
-    };
-
-    document.getElementById('topic-form').addEventListener('submit', async e => {
+    document.getElementById('topic-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        Swal.fire({ title: 'Sedang memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        
-        const id = document.getElementById('topic-id').value;
-        const fileInput = document.getElementById('topic-thumbnail');
-        let thumbnail_url = existingThumbnailUrl;
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        btn.disabled = true;
 
-        if (fileInput.files.length > 0) {
-            thumbnail_url = await toBase64(fileInput.files[0]);
-        }
-
-        const payload = {
-            title: document.getElementById('topic-title').value,
-            category_slug: document.getElementById('topic-slug').value,
-            description: document.getElementById('topic-description').value,
-            thumbnail_url
-        };
-
-        const url = id ? `/api/admin/topics/${id}` : '/api/admin/topics';
-        await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        
-        Swal.close();
-        Toast.fire({ icon: 'success', title: 'Data berhasil disimpan!' });
-        resetTopicForm();
-        fetchTopics();
-    });
-
-    const resetTopicForm = () => {
-        document.getElementById('topic-form').reset();
-        document.getElementById('topic-id').value = '';
-        document.getElementById('topic-current-thumb').textContent = '';
-        existingThumbnailUrl = "";
-        document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-plus-circle"></i><span>Tambah Topik</span>';
-        document.getElementById('topic-cancel-btn').classList.add('hidden');
-    };
-
-    document.getElementById('topics-table-container').addEventListener('click', e => {
-        const row = e.target.closest('tr');
-        if (!row) return;
-        const id = row.dataset.id;
-        if (e.target.closest('.edit-topic-btn')) {
-            document.getElementById('topic-id').value = id;
-            document.getElementById('topic-title').value = row.dataset.title;
-            document.getElementById('topic-slug').value = row.dataset.slug;
-            document.getElementById('topic-description').value = row.dataset.desc;
-            document.getElementById('topic-current-thumb').textContent = "Gambar saat ini: " + row.dataset.thumb;
-            existingThumbnailUrl = row.dataset.thumb;
-            document.getElementById('topic-submit-btn').innerHTML = '<i class="fas fa-save"></i><span>Update Topik</span>';
-            document.getElementById('topic-cancel-btn').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-        if (e.target.closest('.manage-content-btn')) {
-            currentTopicSlug = row.dataset.slug;
-            document.getElementById('modal-title').textContent = `Kelola Konten: ${row.dataset.title}`;
-            document.getElementById('content-modal').classList.remove('hidden');
-            loadContentForTopic(currentTopicSlug);
-        }
-        if (e.target.closest('.delete-topic-btn')) {
-            Swal.fire({ title: 'Hapus Topik?', text: 'Data tidak bisa dikembalikan!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/topics/${id}`, { method: 'DELETE' }).then(() => { fetchTopics(); Toast.fire({ icon: 'success', title: 'Berhasil dihapus!' }); });
-                }
+        try {
+            const file = document.getElementById('topic-thumbnail').files[0];
+            await apiFetch('/api/admin/topics', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    title: document.getElementById('topic-title').value,
+                    category_slug: document.getElementById('topic-slug').value,
+                    description: document.getElementById('topic-desc').value,
+                    thumbnail_url: file ? await toBase64(file) : null
+                })
             });
+            e.target.reset();
+            fetchTopics();
+            Swal.fire({icon: 'success', title: 'Topik ditambahkan', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     });
 
-    const loadContentForTopic = async (slug) => {
-        const [kotobaRes, quizRes] = await Promise.all([
-            fetch(`/api/admin/kotoba/${slug}`),
-            fetch(`/api/admin/quizzes/${slug}`)
-        ]);
-        const kotobaData = await kotobaRes.json();
-        const quizData = await quizRes.json();
-
-        const kotobaList = document.getElementById('kotoba-list');
-        kotobaList.innerHTML = '';
-        kotobaData.forEach((k, i) => {
-            kotobaList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border">
-                <div class="flex items-center space-x-3 truncate">
-                    <img src="${k.image_url}" class="w-10 h-10 rounded border object-cover">
-                    <img src="${k.word_url}" class="w-10 h-10 rounded border object-cover">
-                    <span class="text-xs text-slate-500">Kartu #${i+1}</span>
-                </div>
-                <button data-id="${k.id}" class="delete-kotoba-btn text-red-600 p-2"><i class="fas fa-trash"></i></button>
-            </div>`;
+    async function deleteTopic(id) {
+        const result = await Swal.fire({
+            title: 'Hapus Topik?',
+            text: "Semua level & konten di dalamnya akan hilang!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            customClass: { popup: 'rounded-2xl text-sm' }
         });
-
-        const quizList = document.getElementById('quiz-list');
-        quizList.innerHTML = '';
-        quizData.forEach((q, i) => {
-            quizList.innerHTML += `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border">
-                <div class="truncate">
-                    <p class="text-sm font-bold text-slate-700 truncate">${q.question}</p>
-                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Jawaban: ${q.correct_answer.toUpperCase()}</span>
-                </div>
-                <button data-id="${q.id}" class="delete-quiz-btn text-red-600 p-2"><i class="fas fa-trash"></i></button>
-            </div>`;
-        });
-    };
-
-    document.getElementById('kotoba-form').addEventListener('submit', async e => {
-        e.preventDefault();
-        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        const imgFile = document.getElementById('kotoba-image').files[0];
-        const wordFile = document.getElementById('kotoba-word').files[0];
         
-        const payload = {
-            category_slug: currentTopicSlug,
-            image_url: await toBase64(imgFile),
-            word_url: await toBase64(wordFile)
-        };
+        if(result.isConfirmed) {
+            await apiFetch(`/api/admin/topics/${id}`, { method: 'DELETE' });
+            fetchTopics();
+        }
+    }
 
-        await fetch('/api/admin/kotoba', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        Swal.close();
-        document.getElementById('kotoba-form').reset();
-        loadContentForTopic(currentTopicSlug);
+    // --- LEVEL MANAGER ---
+    function openManager(topicId, title) {
+        currentTopicId = topicId;
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('content-modal').classList.remove('hidden');
+        document.getElementById('content-modal').classList.add('flex'); // Enable flex
+        document.getElementById('no-level-selected').classList.remove('hidden');
+        document.getElementById('active-level-content').classList.add('hidden');
+        fetchLevels();
+    }
+
+    function closeModal() {
+        document.getElementById('content-modal').classList.add('hidden');
+        document.getElementById('content-modal').classList.remove('flex');
+    }
+
+    async function fetchLevels() {
+        const levels = await apiFetch(`/api/topics/${currentTopicId}/levels`);
+        const list = document.getElementById('levels-list');
+        
+        if(!levels || levels.length === 0) {
+            list.innerHTML = `<div class="text-[10px] text-center text-slate-400 py-4 italic">Belum ada part.</div>`;
+            return;
+        }
+
+        list.innerHTML = levels.map((l, idx) => `
+            <div onclick="selectLevel(${l.id}, '${l.title}')" class="group cursor-pointer p-2 rounded-lg border transition-all flex items-center justify-between ${currentLevelId === l.id ? 'bg-blue-50 border-blue-200 shadow-sm' : 'bg-white border-transparent hover:bg-gray-100'}">
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold ${currentLevelId === l.id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'}">${idx + 1}</div>
+                    <span class="text-xs font-medium text-slate-700 truncate ${currentLevelId === l.id ? 'text-blue-700' : ''}">${l.title}</span>
+                </div>
+                ${currentLevelId === l.id ? '<i class="fas fa-chevron-right text-[10px] text-blue-500"></i>' : ''}
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('level-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await apiFetch('/api/admin/levels', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                topic_id: currentTopicId,
+                title: document.getElementById('level-title').value,
+                level_order: 1 
+            })
+        });
+        document.getElementById('level-title').value = '';
+        fetchLevels();
     });
 
-    document.getElementById('quiz-form').addEventListener('submit', async e => {
-        e.preventDefault();
-        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        const quizFile = document.getElementById('quiz-image').files[0];
+    // --- CONTENT EDITOR ---
+    function selectLevel(levelId, levelTitle) {
+        currentLevelId = levelId;
+        document.getElementById('current-level-name').innerText = levelTitle;
+        document.getElementById('no-level-selected').classList.add('hidden');
+        document.getElementById('active-level-content').classList.remove('hidden');
+        fetchLevels(); // Update active state UI
         
-        const payload = {
-            category_slug: currentTopicSlug,
-            question: document.getElementById('quiz-question').value,
-            image_url: quizFile ? await toBase64(quizFile) : null,
-            option_a: document.getElementById('quiz-op-a').value,
-            option_b: document.getElementById('quiz-op-b').value,
-            option_c: document.getElementById('quiz-op-c').value,
-            option_d: document.getElementById('quiz-op-d').value,
-            correct_answer: document.getElementById('quiz-correct').value
-        };
+        // Default tab
+        switchTab('kotoba');
+        fetchKotoba();
+        fetchQuiz();
+    }
 
-        await fetch('/api/admin/quizzes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        Swal.close();
-        document.getElementById('quiz-form').reset();
-        loadContentForTopic(currentTopicSlug);
-    });
+    async function deleteCurrentLevel() {
+        if(!confirm('Hapus part ini?')) return;
+        await apiFetch(`/api/admin/levels/${currentLevelId}`, { method: 'DELETE' });
+        currentLevelId = null;
+        document.getElementById('no-level-selected').classList.remove('hidden');
+        document.getElementById('active-level-content').classList.add('hidden');
+        fetchLevels();
+    }
 
-    document.getElementById('content-modal').addEventListener('click', e => {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        const id = btn.dataset.id;
-        const url = btn.classList.contains('delete-kotoba-btn') ? `/api/admin/kotoba/${id}` : btn.classList.contains('delete-quiz-btn') ? `/api/admin/quizzes/${id}` : null;
-        if (url) {
-            fetch(url, { method: 'DELETE' }).then(() => loadContentForTopic(currentTopicSlug));
+    function switchTab(tab) {
+        const tKotoba = document.getElementById('tab-kotoba');
+        const tQuiz = document.getElementById('tab-quiz');
+        const pKotoba = document.getElementById('panel-kotoba');
+        const pQuiz = document.getElementById('panel-quiz');
+
+        if(tab === 'kotoba') {
+            tKotoba.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-blue-600 transition-all border border-gray-200";
+            tQuiz.className = "flex-1 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 transition-all";
+            pKotoba.classList.remove('hidden');
+            pQuiz.classList.add('hidden');
+        } else {
+            tQuiz.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-green-600 transition-all border border-gray-200";
+            tKotoba.className = "flex-1 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 transition-all";
+            pQuiz.classList.remove('hidden');
+            pKotoba.classList.add('hidden');
+        }
+    }
+
+    // --- KOTOBA ---
+    async function fetchKotoba() {
+        const data = await apiFetch(`/api/kotoba/level/${currentLevelId}`);
+        const container = document.getElementById('kotoba-items');
+        if(!data || data.length === 0) {
+            container.innerHTML = `<p class="col-span-full text-center text-[10px] text-slate-400 italic py-2">Belum ada kartu.</p>`;
+            return;
+        }
+        container.innerHTML = data.map(k => `
+            <div class="relative group border border-gray-200 rounded-xl p-2 bg-white hover:border-blue-300 transition-all">
+                <div class="aspect-square bg-gray-50 rounded-lg mb-2 overflow-hidden flex items-center justify-center p-1">
+                    <img src="${k.image_url}" class="w-full h-full object-contain">
+                </div>
+                <div class="h-6 bg-gray-50 rounded flex items-center justify-center overflow-hidden">
+                    <img src="${k.word_url}" class="h-full object-contain">
+                </div>
+                <button onclick="deleteKotoba(${k.id})" class="absolute -top-1.5 -right-1.5 bg-white text-red-500 border border-red-100 shadow-sm w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('kotoba-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        try {
+            const img = document.getElementById('kotoba-img').files[0];
+            const word = document.getElementById('kotoba-word').files[0];
+            await apiFetch('/api/admin/kotoba', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    level_id: currentLevelId,
+                    image_url: await toBase64(img),
+                    word_url: await toBase64(word)
+                })
+            });
+            e.target.reset();
+            fetchKotoba();
+        } finally {
+            btn.innerHTML = orig;
+            btn.disabled = false;
         }
     });
 
-    document.getElementById('close-modal-btn').onclick = () => document.getElementById('content-modal').classList.add('hidden');
-    document.getElementById('topic-cancel-btn').onclick = resetTopicForm;
+    async function deleteKotoba(id) {
+        if(!confirm('Hapus kartu?')) return;
+        await apiFetch(`/api/admin/kotoba/${id}`, { method: 'DELETE' });
+        fetchKotoba();
+    }
 
+    // --- QUIZ ---
+    async function fetchQuiz() {
+        const data = await apiFetch(`/api/quiz/level/${currentLevelId}`);
+        const container = document.getElementById('quiz-items');
+        if(!data || data.length === 0) {
+            container.innerHTML = `<p class="text-center text-[10px] text-slate-400 italic py-2">Belum ada soal.</p>`;
+            return;
+        }
+        container.innerHTML = data.map(q => `
+            <div class="flex items-start justify-between p-3 border border-gray-200 rounded-xl bg-white hover:border-green-300 transition-all gap-3 group">
+                <div class="flex gap-3 overflow-hidden min-w-0">
+                    ${q.image_url ? `<img src="${q.image_url}" class="w-10 h-10 object-cover rounded-lg bg-gray-100 shrink-0">` : ''}
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-slate-700 truncate">${q.question}</p>
+                        <p class="text-[10px] text-slate-500">Jawaban: <span class="font-mono font-bold text-green-600 uppercase">${q.correct_answer}</span></p>
+                    </div>
+                </div>
+                <button onclick="deleteQuiz(${q.id})" class="text-gray-300 hover:text-red-500 p-1 transition">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('quiz-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        try {
+            const img = document.getElementById('quiz-img').files[0];
+            await apiFetch('/api/admin/quizzes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    level_id: currentLevelId,
+                    question: document.getElementById('quiz-q').value,
+                    image_url: img ? await toBase64(img) : null,
+                    option_a: document.getElementById('op-a').value,
+                    option_b: document.getElementById('op-b').value,
+                    option_c: document.getElementById('op-c').value,
+                    option_d: document.getElementById('op-d').value,
+                    correct_answer: document.getElementById('correct-op').value
+                })
+            });
+            e.target.reset();
+            fetchQuiz();
+        } finally {
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        }
+    });
+
+    async function deleteQuiz(id) {
+        if(!confirm('Hapus soal?')) return;
+        await apiFetch(`/api/admin/quizzes/${id}`, { method: 'DELETE' });
+        fetchQuiz();
+    }
+
+    // INIT
     fetchTopics();
-});
 </script>
 </body>
 </html>

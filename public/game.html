@@ -35,12 +35,6 @@
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            20%, 60% { transform: translateX(-4px) rotate(-2deg); }
-            40%, 80% { transform: translateX(4px) rotate(2deg); }
-        }
-      
         .card.cleared .card-inner {
             filter: grayscale(80%);
             transform: scale(0.95) rotateY(180deg);
@@ -50,7 +44,6 @@
 </head>
 <body class="font-poppins bg-slate-50 min-h-screen text-slate-800">
     
-    <!-- Header dengan Back Button -->
     <div class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between max-w-7xl mx-auto">
@@ -72,14 +65,11 @@
         </div>
     </div>
 
-    <!-- Main Content Wrapper -->
     <div class="relative">
-        <!-- Game Board Container -->
         <div class="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
             <div class="max-w-7xl mx-auto">
                 <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8">
                     
-                    <!-- Info Bar -->
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-5 sm:mb-6 pb-4 sm:pb-5 border-b border-slate-200">
                         <div class="flex items-center gap-4">
                             <div class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg">
@@ -99,13 +89,11 @@
                         </button>
                     </div>
     
-                    <!-- Game Board Grid -->
                     <div id="game-board" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Success Notification -->
         <div id="success-notification" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl shadow-2xl p-8 text-center transform scale-95 opacity-0">
                 <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -113,14 +101,19 @@
                 </div>
                 <h2 class="text-3xl font-bold text-slate-800 mb-2">Permainan Selesai!</h2>
                 <p class="text-slate-600 mb-6">Skor akhir kamu adalah <strong id="final-score" class="text-sky-600 text-lg">0</strong>.</p>
-                <button onclick="initGame()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                    Main Lagi
-                </button>
+                <div class="space-y-3">
+                    <button onclick="initGame()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md">
+                        Main Lagi
+                    </button>
+                    <button onclick="window.history.back()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-lg transition-all duration-200">
+                        Kembali ke Menu
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Tetap ada untuk error, tapi tidak untuk success -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
     let gameData = [];
@@ -135,29 +128,35 @@
     const scoreEl = document.getElementById('score');
     const successNotification = document.getElementById('success-notification');
     const finalScoreEl = document.getElementById('final-score');
-    const category = window.location.pathname.split('/').pop();
+    
+    // UPDATE: Ambil Level ID dari URL terakhir (/game/123)
+    const levelId = window.location.pathname.split('/').pop();
 
     async function fetchAndStartGame() {
-        const showSkeletonLoader = (count = 12) => {
+        const showSkeletonLoader = (count = 10) => {
             gameBoard.innerHTML = '';
             for (let i = 0; i < count; i++) {
-                const skeletonCard = `
-                    <div class="aspect-[3/4] bg-slate-200 rounded-xl sm:rounded-2xl animate-pulse"></div>
-                `;
-                gameBoard.innerHTML += skeletonCard;
+                gameBoard.innerHTML += `<div class="aspect-[3/4] bg-slate-200 rounded-xl sm:rounded-2xl animate-pulse"></div>`;
             }
         };
         showSkeletonLoader();
 
         try {
-            const res = await fetch(`/api/kotoba/${category}`);
-            if (!res.ok) throw new Error('Data tidak ditemukan');
+            // UPDATE: Fetch ke API Level
+            const res = await fetch(`/api/kotoba/level/${levelId}`);
+            if (!res.ok) throw new Error('Gagal mengambil data level');
             const apiData = await res.json();
-            if (apiData.length === 0) throw new Error('Belum ada kartu untuk kategori ini.');
+            
+            if (apiData.length === 0) throw new Error('Belum ada kartu di level ini.');
+            
             gameData = apiData.map(item => ({ id: item.id, image: item.image_url, word: item.word_url }));
             initGame();
         } catch (error) {
-            gameBoard.innerHTML = `<p class="text-red-500 col-span-full text-center font-semibold py-8"><i class="fas fa-exclamation-triangle mr-2"></i>${error.message}</p>`;
+            gameBoard.innerHTML = `<div class="col-span-full text-center py-10">
+                <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
+                <p class="text-red-500 font-semibold">${error.message}</p>
+                <button onclick="window.history.back()" class="mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg">Kembali</button>
+            </div>`;
         }
     }
 
@@ -189,10 +188,15 @@
 
     function createCard(item, type) {
         const card = document.createElement('div');
-        card.className = 'card cursor-pointer aspect-[3/4] perspective-1000 relative overflow-hidden'; // Tambahkan relative dan overflow-hidden
+        card.className = 'card cursor-pointer aspect-[3/4] perspective-1000 relative overflow-hidden';
         card.dataset.id = item.id;
         card.dataset.type = type;
-        const content = type === 'image' ? `<img src="${item.image}" class="w-full h-full object-contain p-2">` : `<img src="${item.word}" class="w-full h-full object-contain p-2">`;
+        
+        // Pembeda konten: jika type image tampilkan gambar benda, jika word tampilkan gambar tulisan
+        const content = type === 'image' ? 
+            `<img src="${item.image}" class="w-full h-full object-contain p-2">` : 
+            `<img src="${item.word}" class="w-full h-full object-contain p-2">`;
+            
         card.innerHTML = `
             <div class="card-inner w-full h-full relative">
                 <div class="card-front absolute w-full h-full bg-slate-700 hover:bg-slate-600 transition-colors duration-200 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md">
@@ -214,16 +218,15 @@
         cards.forEach(card => {
             const overlay = document.createElement('div');
             overlay.className = 'absolute inset-0 z-10';
-            overlay.style.backgroundColor = isMatch ? 'rgba(22, 163, 74, 0.4)' : 'rgba(220, 38, 38, 0.4)'; // Green or Red overlay
+            overlay.style.backgroundColor = isMatch ? 'rgba(22, 163, 74, 0.4)' : 'rgba(220, 38, 38, 0.4)'; 
             
             const slash = document.createElement('div');
             slash.className = 'absolute top-1/2 left-1/2 w-[150%] h-2 rounded-full z-20';
-            slash.style.backgroundColor = isMatch ? '#ffffff' : '#f87171'; // White or Light Red slash
+            slash.style.backgroundColor = isMatch ? '#ffffff' : '#f87171';
             slash.style.boxShadow = `0 0 12px 3px ${isMatch ? 'rgba(255,255,255,0.6)' : 'rgba(239, 68, 68, 0.6)'}`;
 
             card.appendChild(overlay);
             card.appendChild(slash);
-
             elementsToAnimate.push(overlay, slash);
 
             const randomAngle = -40 + Math.random() * 80;
@@ -239,23 +242,10 @@
                 if (onCompleteCallback) onCompleteCallback();
             }
         })
-        .fromTo(overlays, 
-            { opacity: 0 },
-            { duration: 0.1, opacity: 1, ease: 'power2.in' }
-        )
-        .fromTo(slashes,
-            { scaleX: 0, transformOrigin: 'left center' },
-            { duration: 0.2, scaleX: 1, ease: 'power2.out' },
-            "-=0.05" // Mulai sedikit setelah overlay muncul
-        )
-        .to(slashes,
-            { duration: 0.15, scaleX: 0, transformOrigin: 'right center', ease: 'power2.in' },
-            "+=0.1" // Jeda sebelum slash menghilang
-        )
-        .to(overlays,
-            { duration: 0.2, opacity: 0, ease: 'power2.out' },
-            "-=0.15" // Mulai fade out saat slash menghilang
-        );
+        .fromTo(overlays, { opacity: 0 }, { duration: 0.1, opacity: 1 })
+        .fromTo(slashes, { scaleX: 0, transformOrigin: 'left center' }, { duration: 0.2, scaleX: 1 }, "-=0.05")
+        .to(slashes, { duration: 0.15, scaleX: 0, transformOrigin: 'right center' }, "+=0.1")
+        .to(overlays, { duration: 0.2, opacity: 0 }, "-=0.15");
     }
 
     function handleCardClick(card) {
@@ -268,16 +258,16 @@
             canSelect = false;
             const [card1, card2] = selectedCards;
 
+            // ID sama (1 pair) TAPI Type beda (image vs word)
             if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
-                // --- KARTU COCOK ---
-                score += 100; // Tambah skor
+                // MATCH
+                score += 100;
                 matchedPairs++;
                 updateUI();
                 card1.classList.add('matched');
                 card2.classList.add('matched');
 
                 playSlashAnimation([card1, card2], true, () => {
-                    // Callback setelah animasi selesai
                     card1.classList.add('cleared');
                     card2.classList.add('cleared');
                     selectedCards = [];
@@ -286,11 +276,10 @@
                 });
 
             } else {
-                // --- KARTU TIDAK COCOK ---
-                score = Math.max(0, score - 25); // Kurangi skor, minimal 0
+                // NO MATCH
+                score = Math.max(0, score - 25);
                 updateUI();
                 playSlashAnimation([card1, card2], false, () => {
-                    // Callback setelah animasi selesai
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
                     selectedCards = [];
@@ -304,10 +293,7 @@
         finalScoreEl.textContent = score;
         successNotification.classList.remove('hidden');
         gsap.to(successNotification.querySelector('div'), {
-            duration: 0.5,
-            scale: 1,
-            opacity: 1,
-            ease: 'elastic.out(1, 0.75)'
+            duration: 0.5, scale: 1, opacity: 1, ease: 'elastic.out(1, 0.75)'
         });
     }
 

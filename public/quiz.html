@@ -6,289 +6,212 @@
     <title>Kuis Interaktif</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif']
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="font-poppins bg-slate-50 min-h-screen text-slate-800">
+<body class="font-sans bg-slate-50 min-h-screen text-slate-800">
 
-    <!-- Header dengan Back Button -->
     <div class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between max-w-4xl mx-auto">
-                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-200 font-medium text-sm sm:text-base">
-                    <i class="fas fa-arrow-left text-base sm:text-lg"></i>
-                    <span class="hidden sm:inline">Kembali</span>
+            <div class="flex items-center justify-between max-w-2xl mx-auto">
+                <button onclick="window.history.back()" class="flex items-center gap-2 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
+                    <i class="fas fa-arrow-left text-lg"></i>
                 </button>
                 
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-slate-800 rounded-lg flex items-center justify-center shadow-sm">
-                        <i class="fas fa-question-circle text-white text-lg sm:text-xl"></i>
-                    </div>
-                    <div class="hidden sm:block">
-                        <p class="text-xs text-slate-500 font-medium">Interactive Quiz</p>
-                        <p class="text-sm text-sky-600 font-semibold">Kuis Bahasa Jepang</p>
-                    </div>
+                <div class="flex flex-col items-center">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kuis</p>
+                    <p class="text-sm font-bold text-slate-800">Soal <span id="question-number">1</span> / <span id="total-questions">-</span></p>
                 </div>
-            </div>
+
+                <div class="w-10"></div> </div>
+        </div>
+        <div class="w-full bg-slate-100 h-1.5">
+            <div id="progress-bar" class="bg-blue-500 h-1.5 transition-all duration-500" style="width: 0%"></div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex items-center justify-center min-h-[calc(100vh-80px)] p-4 py-6 sm:py-8">
-        <div id="quiz-container" class="w-full max-w-3xl mx-auto">
-            
-            <!-- Quiz Box -->
-            <div id="quiz-box" class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                
-                <!-- Quiz Header -->
-                <div id="quiz-header" class="bg-slate-800 px-5 sm:px-8 py-5 sm:py-6 text-white">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-clipboard-list text-xl sm:text-2xl"></i>
-                            <p id="quiz-title" class="text-base sm:text-lg font-bold capitalize">日本語クイズ</p>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">
-                            <p class="text-xs sm:text-sm font-medium">Pertanyaan</p>
-                            <p class="text-lg sm:text-xl font-bold text-center">
-                                <span id="question-number">1</span>/<span id="total-questions">0</span>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
-                        <div id="progress-bar" class="bg-white h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
-                    </div>
-                    
-                    <!-- Score Display -->
-                    <div class="flex items-center justify-center gap-2 mt-4 bg-white/10 backdrop-blur-sm rounded-xl py-2 px-4">
-                        <i class="fas fa-star text-yellow-300 text-lg"></i>
-                        <span class="text-sm font-medium">Skor:</span>
-                        <span id="score" class="text-2xl font-bold">0</span>
-                    </div>
-                </div>
-
-                <!-- Question Area -->
-                <div id="question-area" class="p-5 sm:p-8"></div>
+    <div class="container mx-auto px-4 py-6 max-w-2xl pb-20">
+        <div id="quiz-container">
+            <div id="loading-state" class="text-center py-10">
+                <i class="fas fa-circle-notch fa-spin text-blue-500 text-3xl mb-3"></i>
+                <p class="text-slate-500">Memuat soal...</p>
             </div>
 
-            <!-- Result Box -->
-            <div id="result-box" class="hidden bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-10 text-center">
+            <div id="question-box" class="hidden">
+                <div id="image-container" class="mb-5 hidden rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white">
+                    <img id="question-image" src="" class="w-full max-h-60 object-contain">
+                </div>
+
                 <div class="mb-6">
-                    <div class="w-20 h-20 sm:w-24 sm:h-24 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <i class="fas fa-trophy text-white text-3xl sm:text-4xl"></i>
-                    </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">Kuis Selesai!</h1>
-                    <p class="text-sm sm:text-base text-slate-600 font-medium">Selamat! Kamu telah menyelesaikan kuis</p>
+                    <h2 id="question-text" class="text-xl font-bold text-slate-800 leading-relaxed"></h2>
                 </div>
-                
-                <div class="bg-slate-100 p-6 sm:p-8 rounded-2xl my-6 border border-slate-200">
-                    <p class="text-sm sm:text-base text-slate-700 font-semibold mb-2 flex items-center justify-center gap-2">
-                        <i class="fas fa-star text-yellow-500"></i>
-                        Skor Akhir
-                    </p>
-                    <p id="final-score" class="text-5xl sm:text-6xl font-extrabold text-sky-600 my-3">0</p>
-                    <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-600 mt-3">
-                        <i class="fas fa-check-circle text-green-500"></i>
-                        <span id="result-message" class="font-medium"></span>
-                    </div>
-                </div>
-                
-                <button id="retry-button" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base flex items-center justify-center gap-2">
-                    <i class="fas fa-redo-alt"></i>
-                    Coba Lagi
-                </button>
-            </div>
 
-            <!-- Instructions Card (hanya muncul di awal) -->
-            <div id="instructions-card" class="hidden mt-6 bg-slate-100 rounded-2xl p-5 sm:p-6 border border-slate-200">
-                <h3 class="text-base sm:text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-lightbulb text-yellow-500"></i>
-                    Tips Mengerjakan Kuis
-                </h3>
-                <ul class="space-y-2 text-xs sm:text-sm text-gray-700">
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                        <span>Baca pertanyaan dengan teliti sebelum memilih jawaban</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-sky-500 mt-0.5"></i>
-                        <span>Perhatikan gambar jika ada untuk membantu menjawab</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fas fa-check-circle text-sky-500 mt-0.5"></i>
-                        <span>Setiap jawaban benar akan menambah skor kamu!</span>
-                    </li>
-                </ul>
+                <div id="options-container" class="space-y-3">
+                    </div>
             </div>
         </div>
     </div>
 
 <script>
     let quizData = [];
+    let userAnswersLog = []; // Menyimpan jawaban user
     let currentQuestionIndex = 0;
-    let userScore = 0;
-    let scorePerQuestion = 0;
-    const category = window.location.pathname.split('/').pop();
+    
+    // Ambil Level ID dari URL
+    const levelId = window.location.pathname.split('/').pop();
 
-    const questionNumberEl = document.getElementById('question-number');
-    const totalQuestionsEl = document.getElementById('total-questions');
-    const scoreEl = document.getElementById('score');
-    const progressBarEl = document.getElementById('progress-bar');
-    const questionAreaEl = document.getElementById('question-area');
-    const quizBoxEl = document.getElementById('quiz-box');
-    const resultBoxEl = document.getElementById('result-box');
-    const finalScoreEl = document.getElementById('final-score');
-    const retryButton = document.getElementById('retry-button');
-    const quizTitleEl = document.getElementById('quiz-title');
+    const els = {
+        qNum: document.getElementById('question-number'),
+        qTotal: document.getElementById('total-questions'),
+        progress: document.getElementById('progress-bar'),
+        qBox: document.getElementById('question-box'),
+        loading: document.getElementById('loading-state'),
+        imgContainer: document.getElementById('image-container'),
+        qImg: document.getElementById('question-image'),
+        qText: document.getElementById('question-text'),
+        opts: document.getElementById('options-container')
+    };
 
     async function fetchAndStartQuiz() {
         try {
-            const res = await fetch(`/api/quiz/${category}`);
-            if (!res.ok) throw new Error('Data kuis tidak ditemukan');
+            const res = await fetch(`/api/quiz/level/${levelId}`);
+            if (!res.ok) throw new Error('Gagal mengambil data kuis');
             const apiData = await res.json();
+            
+            if (apiData.length === 0) throw new Error('Belum ada soal kuis untuk level ini.');
+
             quizData = apiData.map(q => ({
+                id: q.id,
                 question: q.question,
                 imageUrl: q.image_url,
                 options: { a: q.option_a, b: q.option_b, c: q.option_c, d: q.option_d },
                 correctAnswer: q.correct_answer
             }));
-            if (quizData.length === 0) throw new Error('Belum ada kuis untuk kategori ini.');
-            quizTitleEl.textContent = `${category} Quiz`;
-            document.title = `${category.charAt(0).toUpperCase() + category.slice(1)} Quiz`;
+            
             startQuiz();
         } catch (error) {
-            questionAreaEl.innerHTML = `<div class="text-center py-8"><i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i><p class="text-red-500 font-semibold">${error.message}</p></div>`;
+            els.loading.innerHTML = `<p class="text-red-500">${error.message}</p>`;
         }
     }
 
     function startQuiz() {
         currentQuestionIndex = 0;
-        userScore = 0;
-        scorePerQuestion = 100 / quizData.length;
-        scoreEl.textContent = "0";
-        resultBoxEl.classList.add('hidden');
-        quizBoxEl.classList.remove('hidden');
+        userAnswersLog = []; // Reset log
+        els.loading.classList.add('hidden');
+        els.qBox.classList.remove('hidden');
+        els.qTotal.textContent = quizData.length;
         loadQuestion();
     }
 
     function loadQuestion() {
-        progressBarEl.style.width = `${(currentQuestionIndex / quizData.length) * 100}%`;
         const q = quizData[currentQuestionIndex];
-        totalQuestionsEl.textContent = quizData.length;
-        questionNumberEl.textContent = currentQuestionIndex + 1;
         
-        let imageHtml = q.imageUrl ? `<div class="mb-6 rounded-xl overflow-hidden border-2 border-blue-100 shadow-md"><img src="${q.imageUrl}" class="w-full max-h-64 sm:max-h-80 object-contain bg-gray-50"></div>` : '';
+        // Update UI Header
+        els.qNum.textContent = currentQuestionIndex + 1;
+        els.progress.style.width = `${(currentQuestionIndex / quizData.length) * 100}%`;
 
-        let optionsHtml = '';
-        const optionLabels = { a: 'A', b: 'B', c: 'C', d: 'D' };
-        for (const [key, value] of Object.entries(q.options)) {
-            optionsHtml += `
-                <div class="option-item group border-2 border-slate-200 hover:border-sky-400 hover:bg-sky-50 rounded-xl p-4 cursor-pointer transition-all duration-200 flex items-center gap-3" onclick="handleOptionClick(this, '${key}')">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 group-hover:bg-sky-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="font-bold text-slate-600 group-hover:text-sky-700 text-sm sm:text-base">${optionLabels[key]}</span>
-                    </div>
-                    <span class="text-sm sm:text-base font-medium text-gray-800">${value}</span>
-                </div>
-            `;
+        // Update Image
+        if (q.imageUrl) {
+            els.imgContainer.classList.remove('hidden');
+            els.qImg.src = q.imageUrl;
+        } else {
+            els.imgContainer.classList.add('hidden');
         }
+
+        // Update Text
+        els.qText.textContent = q.question;
+
+        // Render Options
+        els.opts.innerHTML = '';
+        const labels = { a: 'A', b: 'B', c: 'C', d: 'D' };
         
-        questionAreaEl.innerHTML = `
-            <div>
-                ${imageHtml}
-                <div class="mb-6">
-                    <div class="inline-block bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-xs font-semibold mb-3">
-                        <i class="fas fa-question-circle mr-1"></i>
-                        Pertanyaan ${currentQuestionIndex + 1}
-                    </div>
-                    <p class="text-lg sm:text-xl font-bold text-gray-900 leading-relaxed">${q.question}</p>
+        for (const [key, value] of Object.entries(q.options)) {
+            const btn = document.createElement('button');
+            btn.className = `w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all active:scale-98 flex items-center gap-4 group`;
+            btn.onclick = () => handleAnswer(key, btn);
+            btn.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 font-bold flex items-center justify-center group-hover:bg-blue-200 group-hover:text-blue-700 transition-colors">
+                    ${labels[key]}
                 </div>
-                <div class="space-y-3">
-                    ${optionsHtml}
-                </div>
-            </div>
-        `;
+                <span class="font-semibold text-slate-700 group-hover:text-blue-900">${value}</span>
+            `;
+            els.opts.appendChild(btn);
+        }
     }
 
-    function handleOptionClick(optionEl, selectedKey) {
-        document.querySelectorAll('.option-item').forEach(opt => opt.onclick = null);
-        const isCorrect = selectedKey === quizData[currentQuestionIndex].correctAnswer;
-        
+    function handleAnswer(selectedKey, btnElement) {
+        // Disable semua tombol agar tidak diklik 2x
+        const allBtns = els.opts.querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+
+        const q = quizData[currentQuestionIndex];
+        const isCorrect = selectedKey === q.correctAnswer;
+
+        // Simpan data jawaban ke log
+        userAnswersLog.push({
+            question: q.question,
+            imageUrl: q.imageUrl,
+            selectedKey: selectedKey,
+            selectedAnswerText: q.options[selectedKey],
+            correctKey: q.correctAnswer,
+            correctAnswerText: q.options[q.correctAnswer],
+            isCorrect: isCorrect
+        });
+
+        // Visual Feedback Instant (Opsional, biar interaktif)
         if (isCorrect) {
-            userScore += scorePerQuestion;
-            scoreEl.textContent = Math.round(userScore);
-            optionEl.classList.remove('border-slate-200', 'hover:border-sky-400', 'hover:bg-sky-50');
-            optionEl.classList.add('bg-green-100', 'border-green-400');
-            optionEl.innerHTML = `
-                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-check text-white"></i>
-                </div>
-                <span class="text-sm sm:text-base font-medium text-gray-800">${optionEl.textContent}</span>
-            `;
+            btnElement.classList.replace('border-slate-200', 'border-green-500');
+            btnElement.classList.replace('hover:bg-blue-50', 'bg-green-50');
         } else {
-            optionEl.classList.remove('border-slate-200', 'hover:border-sky-400', 'hover:bg-sky-50');
-            optionEl.classList.add('bg-red-100', 'border-red-400');
-            optionEl.innerHTML = `
-                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-times text-white"></i>
-                </div>
-                <span class="text-sm sm:text-base font-medium text-gray-800">${optionEl.textContent}</span>
-            `;
-            
-            const correctOption = quizData[currentQuestionIndex].correctAnswer;
-            const correctEls = document.querySelectorAll('.option-item');
-            correctEls.forEach(el => {
-                if (el.onclick && el.onclick.toString().includes(`'${correctOption}'`)) {
-                    el.classList.remove('border-slate-200');
-                    el.classList.add('bg-green-100', 'border-green-400');
-                    const originalText = el.querySelector('span').textContent;
-                    el.innerHTML = `
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-check text-white"></i>
-                        </div>
-                        <span class="text-sm sm:text-base font-medium text-gray-800">${originalText}</span>
-                    `;
-                }
-            });
+            btnElement.classList.replace('border-slate-200', 'border-red-500');
+            btnElement.classList.replace('hover:bg-blue-50', 'bg-red-50');
         }
-        
-        progressBarEl.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
-        
+
+        // Delay sedikit sebelum lanjut
         setTimeout(() => {
             currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) loadQuestion();
-            else showResults();
-        }, 1200);
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }, 800);
     }
 
-    function showResults() {
-        quizBoxEl.classList.add('hidden');
-        resultBoxEl.classList.remove('hidden');
-        const finalScore = Math.round(userScore);
-        finalScoreEl.textContent = finalScore;
-        
-        const resultMessage = document.getElementById('result-message');
-        if (finalScore >= 80) {
-            resultMessage.innerHTML = '<i class="fas fa-medal text-yellow-500 mr-1"></i> Luar biasa! Skor sempurna!';
-        } else if (finalScore >= 60) {
-            resultMessage.innerHTML = '<i class="fas fa-thumbs-up text-blue-500 mr-1"></i> Bagus! Pertahankan!';
-        } else {
-            resultMessage.innerHTML = '<i class="fas fa-redo text-orange-500 mr-1"></i> Tetap semangat! Coba lagi!';
-        }
+    function finishQuiz() {
+        // Hitung Skor
+        const correctCount = userAnswersLog.filter(a => a.isCorrect).length;
+        const finalScore = Math.round((correctCount / quizData.length) * 100);
+
+        // Siapkan Objek Result
+        const resultData = {
+            score: finalScore,
+            correctCount: correctCount,
+            totalQuestions: quizData.length,
+            details: userAnswersLog,
+            date: new Date().toISOString(),
+            levelId: levelId
+        };
+
+        // Simpan ke LocalStorage
+        localStorage.setItem('quizResult', JSON.stringify(resultData));
+
+        // Redirect ke Halaman Result
+        window.location.href = '/results';
     }
 
-    retryButton.addEventListener('click', startQuiz);
     document.addEventListener('DOMContentLoaded', fetchAndStartQuiz);
 </script>
 </body>
-</html
+</html>

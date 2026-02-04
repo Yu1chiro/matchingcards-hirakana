@@ -3,92 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-matching cards</title>
+    <title>Belajar Bahasa Jepang</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out both; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    }
+                }
+            }
         }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
-    <div class="container mx-auto px-4 py-8 md:py-12">
-        <header class="text-center mb-12 animate-fade-in-up">
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-2">E-<span class="text-sky-600">Matching Cards</span></h1>
-            <p class="text-sm text-slate-500 mx-auto">&copy; 2025 | Ning</p>
-        </header>
+<body class="bg-blue-50/50 min-h-screen text-slate-800">
 
-        <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <!-- Skeleton Loader akan disisipkan di sini oleh JavaScript -->
+    <nav class="bg-white shadow-sm sticky top-0 z-30 border-b border-blue-100">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-lg">
+                    <i class="fas fa-shapes"></i>
+                </div>
+                <span class="font-display font-semibold text-lg text-slate-700">E-Matching <span class="text-blue-500">Cards</span></span>
+            </div>
+            <a href="/login" class="text-slate-400 hover:text-blue-500 transition p-2">
+                <i class="fas fa-cog"></i>
+            </a>
         </div>
-    </div>
+    </nav>
+
+    <header class="container mx-auto px-4 py-8 text-center max-w-2xl">
+        <h1 class="font-display text-3xl md:text-4xl font-semibold text-slate-800 mb-3">Konnichiwa!</h1>
+        <p class="text-slate-500 text-md leading-relaxed mb-5">Welcome to E-matching cards! <br> Silahkan pilih materi favoritmu ya!</p>
+        <p class="text-slate-500 text-xs md:text-base leading-relaxed mb-5">Ning &copy; 2026 - E-matching cards</p>
+    </header>
+
+    <main class="container mx-auto px-4 pb-12">
+        <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 animate-pulse h-64"></div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 animate-pulse h-64"></div>
+        </div>
+    </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const topicsGrid = document.getElementById('topics-grid');
+    document.addEventListener('DOMContentLoaded', async () => {
+        const grid = document.getElementById('topics-grid');
 
-    const showSkeletonLoader = () => {
-        let skeletons = '';
-        for (let i = 0; i < 3; i++) {
-            skeletons += `
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
-                    <div class="aspect-video bg-slate-200"></div>
-                    <div class="p-6">
-                        <div class="h-6 bg-slate-200 rounded w-3/4 mb-4"></div>
-                        <div class="h-4 bg-slate-200 rounded w-full mb-2"></div>
-                        <div class="h-4 bg-slate-200 rounded w-5/6 mb-6"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="h-10 bg-slate-200 rounded-lg"></div>
-                            <div class="h-10 bg-slate-200 rounded-lg"></div>
+        try {
+            const res = await fetch('/api/topics');
+            if (!res.ok) throw new Error('Gagal mengambil data');
+            const topics = await res.json();
+
+            grid.innerHTML = '';
+
+            if (topics.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-10 opacity-70">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" class="w-32 h-32 mx-auto mb-4 opacity-50">
+                        <p class="font-semibold text-slate-400">Belum ada materi tersedia.</p>
+                    </div>`;
+                return;
+            }
+
+            topics.forEach((t, index) => {
+                // Style delay untuk efek muncul bertahap
+                const delay = index * 100; 
+                
+                const card = `
+                    <div class="group bg-white rounded-3xl shadow-sm hover:shadow-xl border border-slate-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 fade-in flex flex-col h-full" style="animation-delay: ${delay}ms">
+                        <div class="relative h-48 overflow-hidden bg-slate-100">
+                            <img src="${t.thumbnail_url || 'https://via.placeholder.com/400x250?text=No+Image'}" 
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                 alt="${t.title}"
+                                 onerror="this.src='https://placehold.co/400x250/e2e8f0/94a3b8?text=No+Image'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
+                            <div class="absolute bottom-3 left-4 right-4">
+                                <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md border border-white/30 uppercase tracking-wide">
+                                    BAB / TOPIK
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-5 flex flex-col flex-1">
+                            <h2 class="font-display text-xl font-bold text-slate-800 mb-2 leading-tight">${t.title}</h2>
+                            <p class="text-slate-500 text-sm line-clamp-2 mb-6 flex-1">${t.description || 'Ayo pelajari kosakata baru di topik ini!'}</p>
+                            
+                            <a href="/levels?topic_id=${t.id}&title=${encodeURIComponent(t.title)}" 
+                               class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-2 group-hover:bg-blue-600">
+                                <span>Mulai Belajar</span>
+                                <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
+                            </a>
                         </div>
                     </div>
-                </div>`;
+                `;
+                grid.innerHTML += card;
+            });
+
+        } catch (error) {
+            console.error(error);
+            grid.innerHTML = `<div class="col-span-full text-center text-red-500 py-10">Gagal memuat topik. Coba refresh halaman.</div>`;
         }
-        topicsGrid.innerHTML = skeletons;
-    };
-
-    showSkeletonLoader();
-
-    try {
-        const response = await fetch('/api/topics');
-        if (!response.ok) throw new Error('Gagal mengambil data topik.');
-        
-        const topics = await response.json();
-        
-        topicsGrid.innerHTML = ''; // Hapus skeleton loader
-
-        if (topics.length === 0) {
-            topicsGrid.innerHTML = `<p class="col-span-full text-center text-slate-500">Belum ada topik yang tersedia.</p>`;
-            return;
-        }
-
-        topics.forEach((topic, index) => {
-            const cardHTML = `
-                <div class="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up" style="animation-delay: ${index * 0.1}s">
-                    <div class="relative overflow-hidden aspect-video">
-                        <img src="${topic.thumbnail_url || 'https://via.placeholder.com/400x225.png?text=No+Image'}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" alt="${topic.title}">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h2 class="text-xl font-bold text-slate-900 mb-2 capitalize">${topic.title}</h2>
-                        <p class="text-slate-600 text-sm mb-6 flex-grow">${topic.description || 'Tidak ada deskripsi.'}</p>
-                        <div class="mt-auto grid grid-cols-2 gap-3">
-                            <a href="/game/${topic.category_slug}" class="text-center bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">Mulai Game</a>
-                            <a href="/quiz/${topic.category_slug}" class="text-center bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">Mulai Kuis</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-            topicsGrid.innerHTML += cardHTML;
-        });
-
-    } catch (error) {
-        topicsGrid.innerHTML = `<p class="col-span-full text-center text-red-500 font-semibold">${error.message}</p>`;
-        console.error('Error fetching topics:', error);
-    }
-});
+    });
 </script>
 </body>
 </html>
