@@ -15,30 +15,16 @@
                         'poppins': ['Poppins', 'sans-serif']
                     }
                 }
-            },
-            variants: {
-                extend: {
-                    transform: ['hover', 'focus', 'group-hover'],
-                },
             }
         }
     </script>
     <style>
-        .card-inner {
-            transform-style: preserve-3d;
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .card.cleared .card-inner {
-            filter: grayscale(80%);
-            transform: scale(0.95) rotateY(180deg);
-            opacity: 0.7;
+        /* Efek saat kartu sudah berhasil dicocokkan */
+        .card.cleared {
+            filter: grayscale(100%);
+            opacity: 0.4;
+            transform: scale(0.95);
+            pointer-events: none; /* Tidak bisa diklik lagi */
         }
     </style>
 </head>
@@ -46,66 +32,80 @@
     
     <div class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between max-w-7xl mx-auto">
-                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-200 font-medium text-sm sm:text-base">
-                    <i class="fas fa-arrow-left text-base sm:text-lg"></i>
+            <div class="flex items-center justify-between max-w-4xl mx-auto">
+                <button onclick="window.history.back()" class="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all font-medium">
+                    <i class="fas fa-arrow-left text-lg"></i>
                     <span class="hidden sm:inline">Kembali</span>
                 </button>
                 
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-slate-800 rounded-lg flex items-center justify-center shadow-sm">
-                        <i class="fas fa-brain text-white text-lg sm:text-xl"></i>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-sky-600 rounded-lg flex items-center justify-center shadow-sm">
+                        <i class="fas fa-link text-white text-xl"></i>
                     </div>
-                    <div class="hidden sm:block">
-                        <p class="text-xs text-slate-500 font-medium">Memory Game</p>
-                        <p class="text-sm text-sky-600 font-semibold">Kotoba Matching</p>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Matching Game</p>
+                        <p class="text-sm text-slate-800 font-bold">Pasangkan Kata!</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="relative">
-        <div class="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
-            <div class="max-w-7xl mx-auto">
-                <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8">
-                    
-                    <div class="flex flex-wrap items-center justify-between gap-4 mb-5 sm:mb-6 pb-4 sm:pb-5 border-b border-slate-200">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg">
-                                <i class="fas fa-layer-group text-slate-600 text-sm sm:text-base"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-slate-800">Pasangan: <span id="matched-pairs" class="text-sky-600">0</span> / <span id="total-pairs">0</span></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg">
-                                <i class="fas fa-star text-yellow-500 text-sm sm:text-base"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-slate-800">Skor: <span id="score" class="text-sky-600">0</span></span>
-                            </div>
+    <div class="relative pb-20">
+        <div class="container mx-auto px-4 py-6 max-w-4xl">
+            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8">
+                
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+                    <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center">
+                        <div class="flex flex-col items-center bg-sky-50 px-4 py-2 rounded-xl border border-sky-100">
+                            <span class="text-[10px] sm:text-xs font-bold text-sky-600 uppercase">Pasangan</span>
+                            <span class="text-lg sm:text-xl font-bold text-slate-800"><span id="matched-pairs">0</span>/<span id="total-pairs">0</span></span>
                         </div>
-                        
-                        <button onclick="initGame()" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold">
-                            <i class="fas fa-sync-alt"></i>
-                            <span class="hidden sm:inline">Mulai Ulang</span>
-                            <span class="sm:hidden">Ulang</span>
-                        </button>
+                        <div class="flex flex-col items-center bg-yellow-50 px-4 py-2 rounded-xl border border-yellow-100">
+                            <span class="text-[10px] sm:text-xs font-bold text-yellow-600 uppercase">Skor</span>
+                            <span id="score" class="text-lg sm:text-xl font-bold text-slate-800">0</span>
+                        </div>
                     </div>
-    
-                    <div id="game-board" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4"></div>
+                    
+                    <button onclick="initGame()" class="mx-auto sm:mx-0 flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all font-semibold text-sm">
+                        <i class="fas fa-sync-alt"></i> Ulangi
+                    </button>
                 </div>
+
+                <div id="game-board" class="grid grid-cols-2 gap-3 sm:gap-6 relative">
+                    <div class="flex flex-col gap-3">
+                        <div class="text-center font-bold text-slate-400 text-xs sm:text-sm uppercase tracking-widest mb-1 pb-2 border-b-2 border-slate-100">
+                            <i class="fas fa-image mr-1"></i> Gambar
+                        </div>
+                        <div id="col-images" class="flex flex-col gap-3"></div>
+                    </div>
+                    
+                    <div class="hidden sm:block absolute left-1/2 top-10 bottom-0 w-px bg-slate-100 -translate-x-1/2"></div>
+
+                    <div class="flex flex-col gap-3">
+                        <div class="text-center font-bold text-slate-400 text-xs sm:text-sm uppercase tracking-widest mb-1 pb-2 border-b-2 border-slate-100">
+                            <i class="fas fa-language mr-1"></i> Kosakata
+                        </div>
+                        <div id="col-words" class="flex flex-col gap-3"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <div id="success-notification" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 text-center transform scale-95 opacity-0">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                    <i class="fas fa-trophy text-4xl text-green-500"></i>
+        <div id="success-notification" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 text-center max-w-sm w-full transform scale-95 opacity-0">
+                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 relative">
+                    <i class="fas fa-star text-5xl text-green-500 relative z-10"></i>
+                    <div class="absolute inset-0 border-4 border-green-400 rounded-full animate-ping opacity-20"></div>
                 </div>
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">Permainan Selesai!</h2>
-                <p class="text-slate-600 mb-6">Skor akhir kamu adalah <strong id="final-score" class="text-sky-600 text-lg">0</strong>.</p>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Hebat Sekali!</h2>
+                <p class="text-slate-500 mb-6 text-sm">Kamu berhasil mencocokkan semua kata. <br>Skor akhir: <strong id="final-score" class="text-sky-600 text-lg">0</strong></p>
                 <div class="space-y-3">
-                    <button onclick="initGame()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md">
+                    <button onclick="initGame()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-sky-200">
                         Main Lagi
                     </button>
-                    <button onclick="window.history.back()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-lg transition-all duration-200">
+                    <button onclick="window.history.back()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-all">
                         Kembali ke Menu
                     </button>
                 </div>
@@ -117,32 +117,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
     let gameData = [];
-    let selectedCards = [];
+    let selectedImage = null;
+    let selectedWord = null;
     let matchedPairs = 0;
     let score = 0;
-    let canSelect = true;
+    let isAnimating = false;
 
-    const gameBoard = document.getElementById('game-board');
+    const colImages = document.getElementById('col-images');
+    const colWords = document.getElementById('col-words');
     const totalPairsEl = document.getElementById('total-pairs');
     const matchedPairsEl = document.getElementById('matched-pairs');
     const scoreEl = document.getElementById('score');
     const successNotification = document.getElementById('success-notification');
     const finalScoreEl = document.getElementById('final-score');
     
-    // UPDATE: Ambil Level ID dari URL terakhir (/game/123)
     const levelId = window.location.pathname.split('/').pop();
 
     async function fetchAndStartGame() {
-        const showSkeletonLoader = (count = 10) => {
-            gameBoard.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                gameBoard.innerHTML += `<div class="aspect-[3/4] bg-slate-200 rounded-xl sm:rounded-2xl animate-pulse"></div>`;
-            }
-        };
-        showSkeletonLoader();
-
         try {
-            // UPDATE: Fetch ke API Level
             const res = await fetch(`/api/kotoba/level/${levelId}`);
             if (!res.ok) throw new Error('Gagal mengambil data level');
             const apiData = await res.json();
@@ -152,32 +144,43 @@
             gameData = apiData.map(item => ({ id: item.id, image: item.image_url, word: item.word_url }));
             initGame();
         } catch (error) {
-            gameBoard.innerHTML = `<div class="col-span-full text-center py-10">
-                <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
-                <p class="text-red-500 font-semibold">${error.message}</p>
-                <button onclick="window.history.back()" class="mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg">Kembali</button>
-            </div>`;
+            colImages.parentElement.parentElement.innerHTML = `
+                <div class="col-span-2 text-center py-10">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-3"></i>
+                    <p class="text-red-500 font-semibold text-sm">${error.message}</p>
+                    <button onclick="window.history.back()" class="mt-4 px-5 py-2 bg-slate-800 text-white font-bold rounded-xl">Kembali</button>
+                </div>`;
         }
     }
 
     function initGame() {
-        gameBoard.innerHTML = '';
+        colImages.innerHTML = '';
+        colWords.innerHTML = '';
         successNotification.classList.add('hidden');
         gsap.set(successNotification.querySelector('div'), { scale: 0.95, opacity: 0 });
 
-        selectedCards = [];
+        selectedImage = null;
+        selectedWord = null;
         matchedPairs = 0;
         score = 0;
-        canSelect = true;
+        isAnimating = false;
         updateUI();
 
-        let cards = [];
+        // Pisahkan pembuatan kartu Kiri (Gambar) dan Kanan (Teks)
+        let images = [];
+        let words = [];
+        
         gameData.forEach(item => {
-            cards.push(createCard(item, 'image'));
-            cards.push(createCard(item, 'word'));
+            images.push(createCard(item, 'image'));
+            words.push(createCard(item, 'word'));
         });
-        cards.sort(() => 0.5 - Math.random());
-        cards.forEach(card => gameBoard.appendChild(card));
+
+        // Acak masing-masing kolom secara independen
+        images.sort(() => 0.5 - Math.random());
+        words.sort(() => 0.5 - Math.random());
+
+        images.forEach(card => colImages.appendChild(card));
+        words.forEach(card => colWords.appendChild(card));
     }
 
     function updateUI() {
@@ -188,48 +191,37 @@
 
     function createCard(item, type) {
         const card = document.createElement('div');
-        card.className = 'card cursor-pointer aspect-[3/4] perspective-1000 relative overflow-hidden';
+        // Desain Face-up (Terbuka terus), dioptimasi agar pas untuk di scroll di mobile
+        card.className = 'card cursor-pointer bg-white border-2 border-slate-200 hover:border-sky-300 rounded-xl sm:rounded-2xl transition-all duration-200 overflow-hidden h-24 sm:h-32 flex items-center justify-center p-2 relative';
         card.dataset.id = item.id;
         card.dataset.type = type;
         
-        // Pembeda konten: jika type image tampilkan gambar benda, jika word tampilkan gambar tulisan
-        const content = type === 'image' ? 
-            `<img src="${item.image}" class="w-full h-full object-contain p-2">` : 
-            `<img src="${item.word}" class="w-full h-full object-contain p-2">`;
+        const contentSrc = type === 'image' ? item.image : item.word;
             
-        card.innerHTML = `
-            <div class="card-inner w-full h-full relative">
-                <div class="card-front absolute w-full h-full bg-slate-700 hover:bg-slate-600 transition-colors duration-200 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md">
-                    <i class="fas fa-question text-white text-3xl sm:text-4xl"></i>
-                </div>
-                <div class="card-back absolute w-full h-full bg-white rounded-xl sm:rounded-2xl border-2 border-sky-400 shadow-lg" style="transform: rotateY(180deg);">
-                    ${content}
-                </div>
-            </div>
-        `;
-        
+        card.innerHTML = `<img src="${contentSrc}" class="w-full h-full object-contain pointer-events-none">`;
         card.addEventListener('click', () => handleCardClick(card));
         return card;
     }
 
+    // Animasi tebasan tetap dipertahankan karena keren!
     function playSlashAnimation(cards, isMatch, onCompleteCallback) {
         const elementsToAnimate = [];
 
         cards.forEach(card => {
             const overlay = document.createElement('div');
             overlay.className = 'absolute inset-0 z-10';
-            overlay.style.backgroundColor = isMatch ? 'rgba(22, 163, 74, 0.4)' : 'rgba(220, 38, 38, 0.4)'; 
+            overlay.style.backgroundColor = isMatch ? 'rgba(22, 163, 74, 0.2)' : 'rgba(220, 38, 38, 0.2)'; 
             
             const slash = document.createElement('div');
             slash.className = 'absolute top-1/2 left-1/2 w-[150%] h-2 rounded-full z-20';
             slash.style.backgroundColor = isMatch ? '#ffffff' : '#f87171';
-            slash.style.boxShadow = `0 0 12px 3px ${isMatch ? 'rgba(255,255,255,0.6)' : 'rgba(239, 68, 68, 0.6)'}`;
+            slash.style.boxShadow = `0 0 12px 3px ${isMatch ? 'rgba(34, 197, 94, 0.6)' : 'rgba(239, 68, 68, 0.6)'}`;
 
             card.appendChild(overlay);
             card.appendChild(slash);
             elementsToAnimate.push(overlay, slash);
 
-            const randomAngle = -40 + Math.random() * 80;
+            const randomAngle = -20 + Math.random() * 40; // Kurangi angle rotasi agar lebih pas di bentuk rect
             gsap.set(slash, { transform: `translate(-50%, -50%) rotate(${randomAngle}deg)` });
         });
 
@@ -249,51 +241,104 @@
     }
 
     function handleCardClick(card) {
-        if (!canSelect || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-        
-        card.classList.add('flipped');
-        selectedCards.push(card);
+        if (isAnimating || card.classList.contains('cleared')) return;
 
-        if (selectedCards.length === 2) {
-            canSelect = false;
-            const [card1, card2] = selectedCards;
-
-            // ID sama (1 pair) TAPI Type beda (image vs word)
-            if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
-                // MATCH
-                score += 100;
-                matchedPairs++;
-                updateUI();
-                card1.classList.add('matched');
-                card2.classList.add('matched');
-
-                playSlashAnimation([card1, card2], true, () => {
-                    card1.classList.add('cleared');
-                    card2.classList.add('cleared');
-                    selectedCards = [];
-                    canSelect = true;
-                    if (matchedPairs === gameData.length) showSuccessNotification();
-                });
-
-            } else {
-                // NO MATCH
-                score = Math.max(0, score - 25);
-                updateUI();
-                playSlashAnimation([card1, card2], false, () => {
-                    card1.classList.remove('flipped');
-                    card2.classList.remove('flipped');
-                    selectedCards = [];
-                    canSelect = true;
-                });
-            }
+        // Toggle logic: Jika klik tipe gambar, set active image. Kalau klik teks, set active word.
+        if (card.dataset.type === 'image') {
+            if (selectedImage) removeSelectionStyle(selectedImage);
+            selectedImage = card;
+            addSelectionStyle(selectedImage);
+        } else {
+            if (selectedWord) removeSelectionStyle(selectedWord);
+            selectedWord = card;
+            addSelectionStyle(selectedWord);
         }
+
+        // Cek jika kedua sisi (kiri & kanan) sudah dipilih
+        if (selectedImage && selectedWord) {
+            isAnimating = true;
+            checkMatch(selectedImage, selectedWord);
+        }
+    }
+
+    function addSelectionStyle(card) {
+        card.classList.replace('border-slate-200', 'border-sky-500');
+        card.classList.replace('hover:border-sky-300', 'border-sky-500');
+        card.classList.add('bg-sky-50', 'ring-4', 'ring-sky-100', 'scale-[1.02]');
+    }
+
+    function removeSelectionStyle(card) {
+        card.classList.replace('border-sky-500', 'border-slate-200');
+        card.classList.replace('border-sky-500', 'hover:border-sky-300');
+        card.classList.remove('bg-sky-50', 'ring-4', 'ring-sky-100', 'scale-[1.02]');
+    }
+
+    function checkMatch(imgCard, wordCard) {
+        if (imgCard.dataset.id === wordCard.dataset.id) {
+            // MATCH!
+            score += 100;
+            matchedPairs++;
+            updateUI();
+
+            // Styling hijau
+            [imgCard, wordCard].forEach(c => {
+                c.classList.replace('border-sky-500', 'border-green-500');
+                c.classList.replace('bg-sky-50', 'bg-green-50');
+                c.classList.replace('ring-sky-100', 'ring-green-100');
+            });
+
+            playSlashAnimation([imgCard, wordCard], true, () => {
+                // Beri class cleared untuk efek disable
+                imgCard.classList.add('cleared');
+                wordCard.classList.add('cleared');
+                
+                // Reset styling
+                imgCard.classList.remove('bg-green-50', 'ring-4', 'ring-green-100', 'scale-[1.02]');
+                wordCard.classList.remove('bg-green-50', 'ring-4', 'ring-green-100', 'scale-[1.02]');
+                
+                resetSelection();
+                if (matchedPairs === gameData.length) showSuccessNotification();
+            });
+
+        } else {
+            // NO MATCH :(
+            score = Math.max(0, score - 25);
+            updateUI();
+
+            // Styling merah & goyang
+            [imgCard, wordCard].forEach(c => {
+                c.classList.replace('border-sky-500', 'border-red-500');
+                c.classList.replace('bg-sky-50', 'bg-red-50');
+                c.classList.replace('ring-sky-100', 'ring-red-100');
+                
+                // Animasi goyang gagal menggunakan GSAP
+                gsap.to(c, { x: [-5, 5, -5, 5, 0], duration: 0.4 });
+            });
+
+            playSlashAnimation([imgCard, wordCard], false, () => {
+                removeSelectionStyle(imgCard);
+                removeSelectionStyle(wordCard);
+                // Kembalikan ke border awal dari merah
+                imgCard.classList.replace('border-red-500', 'border-slate-200');
+                wordCard.classList.replace('border-red-500', 'border-slate-200');
+                imgCard.classList.remove('bg-red-50', 'ring-red-100');
+                wordCard.classList.remove('bg-red-50', 'ring-red-100');
+                resetSelection();
+            });
+        }
+    }
+
+    function resetSelection() {
+        selectedImage = null;
+        selectedWord = null;
+        isAnimating = false;
     }
 
     function showSuccessNotification() {
         finalScoreEl.textContent = score;
         successNotification.classList.remove('hidden');
         gsap.to(successNotification.querySelector('div'), {
-            duration: 0.5, scale: 1, opacity: 1, ease: 'elastic.out(1, 0.75)'
+            duration: 0.6, scale: 1, opacity: 1, ease: 'back.out(1.5)'
         });
     }
 
