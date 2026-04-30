@@ -19,10 +19,25 @@
             }
         }
     </script>
+    <style>
+        /* Animasi Pop-up */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-modal {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        /* Custom Scrollbar untuk Modal */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
 
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
         <div class="container mx-auto px-4 h-16 flex items-center gap-4 max-w-2xl">
             <a href="/" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition active:scale-90">
                 <i class="fas fa-arrow-left text-lg"></i>
@@ -38,7 +53,8 @@
         
         <div class="mb-6">
             <h2 class="text-xl font-bold text-slate-700 mb-1">Pilih Bagian</h2>
-            <p class="text-sm text-slate-500">Selesaikan materinya satu per satu ya!</p>
+          <p class="text-sm text-slate-500"><strong>Pasangkan kartu</strong> dengan sesuai <br>
+Klik <strong>kosakata dan gambar</strong> yang sesuai</p>
         </div>
 
         <div id="levels-list" class="space-y-4">
@@ -48,13 +64,86 @@
 
     </main>
 
+    <div id="guide-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-modal">
+            
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-center relative">
+                <div class="absolute top-0 right-0 p-4 opacity-20">
+                    <i class="fas fa-shapes text-5xl text-white"></i>
+                </div>
+                <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner border border-white/30 text-4xl">
+                    👋
+                </div>
+                <h2 class="text-2xl font-display font-bold text-white relative z-10">Hello Welcome to Kotobamatch!</h2>
+            </div>
+            
+            <div class="p-6 overflow-y-auto max-h-[50vh] custom-scrollbar space-y-4">
+                <p class="text-slate-600 text-sm text-center mb-2 font-medium">Sebelum mulai, yuk baca petunjuknya dulu biar kamu makin bisa!</p>
+                
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                    <div class="absolute -right-4 -bottom-4 text-blue-200 text-6xl opacity-30 rotate-12 transition-transform group-hover:scale-110">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="font-bold text-blue-800 flex items-center gap-2 mb-2 relative z-10">
+                        <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm shadow-md">1</span>
+                        Main Game (Kartu)
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed relative z-10">
+                        Di sini kamu bakal main tebak-tebakan seru! Cukup <strong>ketuk kartu bergambar</strong>, lalu cari dan ketuk <strong>kartu kosakata</strong> yang pas buat gambar itu. Kumpulin skornya sampai dapat 100 ya!
+                    </p>
+                </div>
+                
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100 relative overflow-hidden group hover:border-green-300 transition-colors">
+                    <div class="absolute -right-4 -bottom-4 text-green-200 text-6xl opacity-30 -rotate-12 transition-transform group-hover:scale-110">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="font-bold text-green-800 flex items-center gap-2 mb-2 relative z-10">
+                        <span class="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center text-sm shadow-md">2</span>
+                        Mulai Kuis (Pilihan)
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed relative z-10">
+                        Udah hafal kosakatanya? Waktunya ngetes ingatanmu! Baca pertanyaannya pelan-pelan, terus pilih jawaban <strong>A, B, C, atau D</strong> yang paling tepat. Jangan buru-buru, kamu pasti bisa!
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-5 border-t border-slate-100 bg-white">
+                <button onclick="closeGuideModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg py-4 rounded-2xl transition-all shadow-lg shadow-slate-200 active:scale-95 flex items-center justify-center gap-2">
+                    <span>Oke, Aku Paham!</span> <i class="fas fa-rocket text-yellow-400"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
 <script>
-    // Ambil Parameter URL
+    // --- LOGIKA MODAL PANDUAN ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Cek di localstorage apakah user sudah pernah melihat guide ini
+        const hasSeenGuide = localStorage.getItem('hasSeenGuide_v1'); // v1 agar bisa di-reset nanti jika ada update fitur
+        const modal = document.getElementById('guide-modal');
+        
+        if (!hasSeenGuide) {
+            // Hilangkan class hidden agar tampil
+            modal.classList.remove('hidden');
+        }
+    });
+
+    function closeGuideModal() {
+        const modal = document.getElementById('guide-modal');
+        // Set value ke true
+        localStorage.setItem('hasSeenGuide_v1', 'true');
+        // Animasi keluar (opsional) lalu sembunyikan
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // --- LOGIKA FETCH DATA LEVEL ---
     const params = new URLSearchParams(window.location.search);
     const topicId = params.get('topic_id');
     const topicTitle = params.get('title');
 
-    // Set Judul
     document.getElementById('topic-title').textContent = topicTitle || 'Materi';
 
     if (!topicId) {

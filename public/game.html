@@ -26,6 +26,14 @@
             transform: scale(0.95);
             pointer-events: none; /* Tidak bisa diklik lagi */
         }
+        /* Animasi halus untuk banner instruksi */
+        .pulse-subtle {
+            animation: pulse-subtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
     </style>
 </head>
 <body class="font-poppins bg-slate-50 min-h-screen text-slate-800">
@@ -54,6 +62,15 @@
     <div class="relative pb-20">
         <div class="container mx-auto px-4 py-6 max-w-4xl">
             <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8">
+                
+                <div class="mb-6 bg-sky-50 border border-sky-100 rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-3 pulse-subtle">
+                    <div class="w-8 h-8 rounded-full bg-sky-200 text-sky-700 flex items-center justify-center shrink-0">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm text-sky-800 font-medium leading-relaxed">
+                        <strong class="font-bold">Cara Bermain:</strong> Ketuk 1 kartu pada kolom <strong>Gambar</strong> lalu pasangkan dengan 1 kartu di kolom <strong>Kosakata</strong>!
+                    </p>
+                </div>
                 
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
                     <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center">
@@ -120,7 +137,9 @@
     let selectedImage = null;
     let selectedWord = null;
     let matchedPairs = 0;
-    let score = 0;
+    
+    // REVISI: Menggunakan rawScore untuk kalkulasi desimal agar akurat
+    let rawScore = 0; 
     let isAnimating = false;
 
     const colImages = document.getElementById('col-images');
@@ -162,7 +181,7 @@
         selectedImage = null;
         selectedWord = null;
         matchedPairs = 0;
-        score = 0;
+        rawScore = 0;
         isAnimating = false;
         updateUI();
 
@@ -186,12 +205,12 @@
     function updateUI() {
         totalPairsEl.textContent = gameData.length;
         matchedPairsEl.textContent = matchedPairs;
-        scoreEl.textContent = score;
+        // REVISI: Tampilkan skor dibulatkan agar rapi (misal 33.3 jadi 33)
+        scoreEl.textContent = Math.round(rawScore);
     }
 
     function createCard(item, type) {
         const card = document.createElement('div');
-        // Desain Face-up (Terbuka terus), dioptimasi agar pas untuk di scroll di mobile
         card.className = 'card cursor-pointer bg-white border-2 border-slate-200 hover:border-sky-300 rounded-xl sm:rounded-2xl transition-all duration-200 overflow-hidden h-24 sm:h-32 flex items-center justify-center p-2 relative';
         card.dataset.id = item.id;
         card.dataset.type = type;
@@ -203,7 +222,6 @@
         return card;
     }
 
-    // Animasi tebasan tetap dipertahankan karena keren!
     function playSlashAnimation(cards, isMatch, onCompleteCallback) {
         const elementsToAnimate = [];
 
@@ -221,7 +239,7 @@
             card.appendChild(slash);
             elementsToAnimate.push(overlay, slash);
 
-            const randomAngle = -20 + Math.random() * 40; // Kurangi angle rotasi agar lebih pas di bentuk rect
+            const randomAngle = -20 + Math.random() * 40; 
             gsap.set(slash, { transform: `translate(-50%, -50%) rotate(${randomAngle}deg)` });
         });
 
@@ -243,7 +261,6 @@
     function handleCardClick(card) {
         if (isAnimating || card.classList.contains('cleared')) return;
 
-        // Toggle logic: Jika klik tipe gambar, set active image. Kalau klik teks, set active word.
         if (card.dataset.type === 'image') {
             if (selectedImage) removeSelectionStyle(selectedImage);
             selectedImage = card;
@@ -254,7 +271,6 @@
             addSelectionStyle(selectedWord);
         }
 
-        // Cek jika kedua sisi (kiri & kanan) sudah dipilih
         if (selectedImage && selectedWord) {
             isAnimating = true;
             checkMatch(selectedImage, selectedWord);
@@ -274,13 +290,16 @@
     }
 
     function checkMatch(imgCard, wordCard) {
+        // REVISI: Logika Skor Dinamis (Max 100)
+        const basePoint = 100 / gameData.length; 
+        const penaltyPoint = basePoint * 0.25; // Pengurangan 25% jika salah
+
         if (imgCard.dataset.id === wordCard.dataset.id) {
             // MATCH!
-            score += 100;
+            rawScore += basePoint;
             matchedPairs++;
             updateUI();
 
-            // Styling hijau
             [imgCard, wordCard].forEach(c => {
                 c.classList.replace('border-sky-500', 'border-green-500');
                 c.classList.replace('bg-sky-50', 'bg-green-50');
@@ -288,11 +307,9 @@
             });
 
             playSlashAnimation([imgCard, wordCard], true, () => {
-                // Beri class cleared untuk efek disable
                 imgCard.classList.add('cleared');
                 wordCard.classList.add('cleared');
                 
-                // Reset styling
                 imgCard.classList.remove('bg-green-50', 'ring-4', 'ring-green-100', 'scale-[1.02]');
                 wordCard.classList.remove('bg-green-50', 'ring-4', 'ring-green-100', 'scale-[1.02]');
                 
@@ -302,23 +319,20 @@
 
         } else {
             // NO MATCH :(
-            score = Math.max(0, score - 25);
+            rawScore = Math.max(0, rawScore - penaltyPoint); // Skor tidak boleh minus
             updateUI();
 
-            // Styling merah & goyang
             [imgCard, wordCard].forEach(c => {
                 c.classList.replace('border-sky-500', 'border-red-500');
                 c.classList.replace('bg-sky-50', 'bg-red-50');
                 c.classList.replace('ring-sky-100', 'ring-red-100');
                 
-                // Animasi goyang gagal menggunakan GSAP
                 gsap.to(c, { x: [-5, 5, -5, 5, 0], duration: 0.4 });
             });
 
             playSlashAnimation([imgCard, wordCard], false, () => {
                 removeSelectionStyle(imgCard);
                 removeSelectionStyle(wordCard);
-                // Kembalikan ke border awal dari merah
                 imgCard.classList.replace('border-red-500', 'border-slate-200');
                 wordCard.classList.replace('border-red-500', 'border-slate-200');
                 imgCard.classList.remove('bg-red-50', 'ring-red-100');
@@ -335,7 +349,8 @@
     }
 
     function showSuccessNotification() {
-        finalScoreEl.textContent = score;
+        // Tampilkan nilai bulat. Jika main sempurna, (100/3) * 3 akan genap 100 berkat Math.round
+        finalScoreEl.textContent = Math.round(rawScore);
         successNotification.classList.remove('hidden');
         gsap.to(successNotification.querySelector('div'), {
             duration: 0.6, scale: 1, opacity: 1, ease: 'back.out(1.5)'
